@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lottie → After Effects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0e;
+      --surface: #181818;
+      --surface2: #212121;
+      --border: #2c2c2c;
+      --border-hi: #444444;
+      --accent: #ff5c35;
+      --accent-glow: rgba(255, 92, 53, 0.14);
+      --text: #ededec;
+      --text-2: #888;
+      --text-3: #4e4e4e;
+      --green: #4ade80;
+      --r-xl: 18px;
+      --r-md: 12px;
+      --r-sm: 8px;
+    }
+
+    body {
+      background: var(--bg);
+      background-image: radial-gradient(ellipse 90% 40% at 50% -5%, rgba(255,92,53,0.07) 0%, transparent 60%);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: 52px 20px 80px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    .header {
+      width: 100%;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 24px;
+      padding: 6px 12px 6px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+    }
+    .logo-icon {
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-icon svg {
+      width: 11px;
+      height: 11px;
+      fill: #fff;
+    }
+    .logo-text {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-2);
+    }
+    .h-title {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .h-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .h-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── Drop Zone ── */
+    .drop-zone {
+      width: 100%;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--r-xl);
+      padding: 52px 36px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .15s;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .drop-zone::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 110%, var(--accent-glow), transparent 65%);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+    }
+    .drop-zone:hover::after,
+    .drop-zone.drag-over::after { opacity: 1; }
+    .drop-zone:hover { border-color: var(--border-hi); }
+    .drop-zone.drag-over {
+      border-color: var(--accent);
+      border-style: solid;
+      transform: scale(1.007);
+    }
+    .dz-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 18px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .2s, background .2s;
+    }
+    .drop-zone:hover .dz-icon,
+    .drop-zone.drag-over .dz-icon {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .dz-icon svg {
+      width: 22px; height: 22px;
+      stroke: var(--text-2);
+      transition: stroke .2s;
+    }
+    .drop-zone:hover .dz-icon svg,
+    .drop-zone.drag-over .dz-icon svg { stroke: var(--accent); }
+    .dz-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+    .dz-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+    .dz-sub strong { color: var(--text); font-weight: 500; }
+    .dz-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 11px;
+      color: var(--text-3);
+    }
+    .dz-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    #file-input { display: none; }
+
+    /* ── Main Card ── */
+    .main-card {
+      display: none;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      animation: up .25s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes up {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+    .topbar-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-close {
+      width: 26px; height: 26px;
+      flex-shrink: 0;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .btn-close:hover {
+      border-color: var(--border-hi);
+      color: var(--text);
+      background: var(--surface2);
+    }
+    .btn-close svg { width: 11px; height: 11px; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+    /* Preview */
+    .preview-area {
+      background: #111;
+      padding: 28px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .preview-wrap {
+      width: 156px; height: 156px;
+      position: relative;
+      border-radius: var(--r-md);
+      overflow: hidden;
+      background-color: #0a0a0a;
+      background-image:
+        linear-gradient(45deg, #151515 25%, transparent 25%),
+        linear-gradient(-45deg, #151515 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #151515 75%),
+        linear-gradient(-45deg, transparent 75%, #151515 75%);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+    }
+    #preview-container { width: 100%; height: 100%; }
+    .preview-ctrl {
+      position: absolute;
+      bottom: 7px; right: 7px;
+      width: 27px; height: 27px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 7px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+      z-index: 2;
+    }
+    .preview-ctrl:hover { background: rgba(255,92,53,.75); }
+    .preview-ctrl svg { width: 10px; height: 10px; fill: #fff; }
+    .stats-strip {
+      display: flex;
+      align-items: center;
+    }
+    .s-item {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+      padding: 0 11px;
+    }
+    .s-item:first-child { padding-left: 0; }
+    .s-item:last-child  { padding-right: 0; }
+    .s-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .s-unit { font-size: 11px; color: var(--text-2); }
+    .s-divider {
+      width: 1px; height: 11px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* Export */
+    .export-area {
+      padding: 18px 18px 20px;
+    }
+    .section-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 11px;
+    }
+    .fmt-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .fmt-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 12px 13px;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color .15s, background .15s;
+    }
+    .fmt-card:hover { border-color: var(--border-hi); }
+    .fmt-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .fmt-card input { display: none; }
+    .fmt-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 3px;
+    }
+    .fmt-desc {
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.45;
+    }
+    .fmt-tag {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-top: 7px;
+    }
+    .t-best    { background: rgba(74,222,128,.12);  color: #4ade80; }
+    .t-quality { background: rgba(96,165,250,.12);  color: #60a5fa; }
+    .t-compat  { background: rgba(251,191,36,.12);  color: #fbbf24; }
+
+    /* Background picker */
+    .bg-picker {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+    }
+    .bg-picker.visible { display: flex; }
+    .bg-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      white-space: nowrap;
+    }
+    .bg-opts {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .bg-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-2);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .bg-btn:hover { border-color: var(--border-hi); color: var(--text); }
+    .bg-btn.active {
+      border-color: var(--accent);
+      color: var(--text);
+      background: var(--accent-glow);
+    }
+    .bg-swatch {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,.15);
+      flex-shrink: 0;
+    }
+    .bg-swatch.transparent {
+      background: repeating-conic-gradient(#555 0% 25%, #333 0% 50%) 0 0 / 6px 6px;
+      border-color: rgba(255,255,255,.25);
+    }
+
+    /* ── Batch file list ── */
+    .batch-list {
+      padding: 6px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .batch-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 11px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      transition: border-color .2s;
+    }
+    .batch-row.br-active { border-color: var(--accent); }
+    .batch-row.br-done   { border-color: rgba(74,222,128,.4); }
+    .batch-row.br-error  { border-color: rgba(248,113,113,.4); }
+    .batch-row-icon {
+      width: 22px; height: 22px;
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px; font-weight: 700;
+      background: var(--surface);
+      color: var(--text-3);
+    }
+    .br-active .batch-row-icon { background: var(--accent-glow); color: var(--accent); }
+    .br-done   .batch-row-icon { background: rgba(74,222,128,.12); color: var(--green); }
+    .br-error  .batch-row-icon { background: rgba(248,113,113,.12); color: #f87171; }
+    .batch-row-name {
+      flex: 1; min-width: 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-size: 12px; font-weight: 500; color: var(--text);
+    }
+    .batch-row-badge {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 4px; flex-shrink: 0;
+      background: var(--surface); color: var(--text-3);
+    }
+    .br-active .batch-row-badge { color: var(--accent); background: var(--accent-glow); }
+    .br-done   .batch-row-badge { color: var(--green);  background: rgba(74,222,128,.12); }
+    .br-error  .batch-row-badge { color: #f87171;       background: rgba(248,113,113,.1); }
+    .batch-row-remove {
+      width: 18px; height: 18px; flex-shrink: 0;
+      border: none; background: none; cursor: pointer;
+      color: var(--text-3); font-size: 15px; line-height: 1;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .15s, color .15s, background .15s;
+      padding: 0;
+    }
+    .batch-row:hover .batch-row-remove { opacity: 1; }
+    .batch-row-remove:hover { color: #f87171; background: rgba(248,113,113,.12); }
+    .batch-add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      width: 100%; padding: 7px 12px;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--r-sm);
+      background: none; cursor: pointer;
+      color: var(--text-3); font-size: 11px; font-weight: 500;
+      transition: border-color .2s, color .2s;
+      box-sizing: border-box;
+    }
+    .batch-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .prog-file-info {
+      font-size: 11px; font-weight: 500; color: var(--text-3);
+      text-align: center; margin-top: 8px; min-height: 14px;
+    }
+
+    .btn-export {
+      width: 100%;
+      height: 44px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--r-sm);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background .15s, transform .1s;
+    }
+    .btn-export:hover { background: #e84e2b; }
+    .btn-export:active { transform: scale(.99); }
+    .btn-export:disabled {
+      background: var(--surface2);
+      color: var(--text-3);
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-export svg { width: 15px; height: 15px; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+
+    /* ── Progress Overlay ── */
+    .progress-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8,8,8,.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress-overlay.active { display: flex; }
+    .prog-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 36px 32px;
+      width: 340px;
+      animation: up .2s cubic-bezier(.16,1,.3,1);
+    }
+    .prog-eyebrow {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 10px;
+    }
+    .prog-count {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+    .prog-count .prog-total {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-2);
+    }
+    .prog-status {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 22px;
+      min-height: 18px;
+    }
+    .prog-track {
+      height: 3px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width .12s linear;
+      width: 0%;
+    }
+
+    /* ── Done Card ── */
+    .done-card {
+      display: none;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      animation: up .25s cubic-bezier(.16,1,.3,1);
+    }
+    .done-hero {
+      padding: 30px 24px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .done-icon {
+      width: 42px; height: 42px;
+      background: rgba(74,222,128,.1);
+      border: 1px solid rgba(74,222,128,.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .done-icon svg {
+      width: 18px; height: 18px;
+      stroke: var(--green);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+    .done-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+    .done-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+    .done-steps {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .step-row:last-child { margin-bottom: 0; }
+    .step-n {
+      width: 20px; height: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-t {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .step-t code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
+      color: var(--text);
+    }
+    .done-actions {
+      padding: 18px 24px 22px;
+    }
+    .btn-dl {
+      width: 100%;
+      height: 44px;
+      background: var(--green);
+      border: none;
+      border-radius: var(--r-sm);
+      color: #052e16;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background .15s, transform .1s;
+      margin-bottom: 9px;
+    }
+    .btn-dl:hover { background: #6ee7b7; }
+    .btn-dl:active { transform: scale(.99); }
+    .btn-dl svg { width: 15px; height: 15px; stroke: #052e16; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .btn-again {
+      width: 100%;
+      height: 38px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text-2);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-again:hover { border-color: var(--border-hi); color: var(--text); }
+
+    /* ── Format Guide ── */
+    .guide {
+      width: 100%;
+      margin-top: 18px;
+    }
+    .guide.hidden {
+      display: none;
+    }
+    .guide-eyebrow {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 12px;
+      padding-left: 2px;
+    }
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .gc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2.5px solid var(--c, #444);
+      border-radius: var(--r-md);
+      padding: 14px 13px 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .gc-badge {
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--c, #888);
+      margin-bottom: 6px;
+    }
+    .gc-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .gc-list {
+      list-style: none;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .gc-list li {
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.4;
+      padding-left: 12px;
+      position: relative;
+    }
+    .gc-list li::before {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--c, #555);
+      opacity: .7;
+    }
+    .gc-how {
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      margin: 0 -13px;
+      padding: 10px 13px;
+    }
+    .gc-how-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .gc-how-text {
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .gc-how-text code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--text);
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #2a1a1a;
+      border: 1px solid #5c2a1a;
+      color: #fca89a;
+      border-radius: var(--r-sm);
+      padding: 10px 16px;
+      font-size: 13px;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      transition: opacity .2s, transform .2s;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 12 12"><path d="M2 2h2v2H2zM8 2h2v2H8zM2 8h2v2H2zM8 8h2v2H8zM4.5 5l3 1.5-3 1.5z"/></svg>
+      </div>
+      <span class="logo-text">Lottie → AE</span>
+    </div>
+    <h1 class="h-title">Export animations<br>to <em>After Effects</em></h1>
+    <p class="h-sub">Drop a Lottie JSON — get a PNG sequence<br>and an AE import script, ready to run.</p>
+  </header>
+
+  <!-- Drop Zone -->
+  <div class="drop-zone" id="drop-zone">
+    <div class="dz-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+    </div>
+    <p class="dz-title">Drop your Lottie file here</p>
+    <div class="dz-tag">
+      <div class="dz-dot"></div>
+      Accepts .json files only · or click to browse
+    </div>
+    <input type="file" id="file-input" accept=".json" multiple />
+  </div>
+
+  <!-- Format Guide -->
+  <section class="guide" id="guide">
+    <div class="guide-eyebrow">Format guide</div>
+    <div class="guide-grid">
+
+      <div class="gc" style="--c: #4ade80">
+        <div class="gc-badge">PNG + Script</div>
+        <div class="gc-title">After Effects &amp; professional use</div>
+        <ul class="gc-list">
+          <li>Sıfır kalite kaybı, lossless</li>
+          <li>Şeffaf arka plan (alfa kanalı)</li>
+          <li>Otomatik AE import scripti</li>
+          <li>Motion graphics &amp; compositing</li>
+        </ul>
+        <div class="gc-how">
+          <span class="gc-how-label">Nasıl kullanılır</span>
+          <p class="gc-how-text">ZIP'i çıkart → AE'de <code>import_to_ae.jsx</code> çalıştır → comp otomatik oluşur</p>
+        </div>
+      </div>
+
+      <div class="gc" style="--c: #60a5fa">
+        <div class="gc-badge">MP4 / APNG</div>
+        <div class="gc-title">Video editörler &amp; sosyal medya</div>
+        <ul class="gc-list">
+          <li>Yüksek kalite MP4 (20 Mbps)</li>
+          <li>Premiere, DaVinci, Final Cut</li>
+          <li>"None" seçince → APNG (şeffaf)</li>
+          <li>APNG her tarayıcıda çalışır</li>
+        </ul>
+        <div class="gc-how">
+          <span class="gc-how-label">Nasıl kullanılır</span>
+          <p class="gc-how-text">İndir → video editörüne sürükle · Şeffaf için "None" seç → APNG alırsın</p>
+        </div>
+      </div>
+
+      <div class="gc" style="--c: #fbbf24">
+        <div class="gc-badge">Animated GIF</div>
+        <div class="gc-title">Web, e-posta &amp; her yer</div>
+        <ul class="gc-list">
+          <li>Her yerde çalışır, plugin yok</li>
+          <li>Figma, Slack, e-posta, sunum</li>
+          <li>256 renk (ikonlar için yeterli)</li>
+          <li>Arka plan rengi seçilebilir</li>
+        </ul>
+        <div class="gc-how">
+          <span class="gc-how-label">Nasıl kullanılır</span>
+          <p class="gc-how-text">İndir → görsel koyabileceğin her yere ekle</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Main Card -->
+  <div class="main-card" id="main-card">
+
+    <div class="batch-list" id="batch-list" style="display:none"></div>
+
+    <div class="topbar">
+      <span class="topbar-name" id="file-name-text">animation.json</span>
+      <button class="btn-close" id="btn-close" title="Load a different file">
+        <svg viewBox="0 0 11 11"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
+      </button>
+    </div>
+
+    <div class="preview-area">
+      <div class="preview-wrap">
+        <div id="preview-container"></div>
+        <button class="preview-ctrl" id="btn-playpause" title="Play / Pause">
+          <svg id="icon-pause" viewBox="0 0 10 12"><rect x="0" y="0" width="3.5" height="12" rx="1"/><rect x="6.5" y="0" width="3.5" height="12" rx="1"/></svg>
+          <svg id="icon-play"  viewBox="0 0 10 12" style="display:none"><path d="M0 0L10 6L0 12Z"/></svg>
+        </button>
+      </div>
+      <div class="stats-strip">
+        <div class="s-item"><span class="s-val" id="stat-w">—</span><span class="s-unit">px</span></div>
+        <div class="s-divider"></div>
+        <div class="s-item"><span class="s-val" id="stat-fps">—</span><span class="s-unit">fps</span></div>
+        <div class="s-divider"></div>
+        <div class="s-item"><span class="s-val" id="stat-frames">—</span><span class="s-unit">frames</span></div>
+        <div class="s-divider"></div>
+        <div class="s-item"><span class="s-val" id="stat-dur">—</span><span class="s-unit">s</span></div>
+      </div>
+    </div>
+
+    <div class="export-area">
+      <div class="section-label">Export format</div>
+      <div class="fmt-grid">
+        <label class="fmt-card selected" id="opt-png">
+          <input type="radio" name="format" value="png" checked />
+          <div class="fmt-name">PNG + Script</div>
+          <div class="fmt-desc">Lossless · Alpha · AE-ready</div>
+          <span class="fmt-tag t-best">For AE</span>
+        </label>
+        <label class="fmt-card" id="opt-mp4">
+          <input type="radio" name="format" value="mp4" />
+          <div class="fmt-name">MP4 Video</div>
+          <div class="fmt-desc">High quality · Any editor</div>
+          <span class="fmt-tag t-quality">Universal</span>
+        </label>
+        <label class="fmt-card" id="opt-gif">
+          <input type="radio" name="format" value="gif" />
+          <div class="fmt-name">Animated GIF</div>
+          <div class="fmt-desc">256 colors · Works anywhere</div>
+          <span class="fmt-tag t-compat">Compatible</span>
+        </label>
+      </div>
+
+      <!-- Background picker (for MP4 / GIF) -->
+      <div class="bg-picker" id="bg-picker">
+        <span class="bg-label">Background</span>
+        <div class="bg-opts">
+          <button class="bg-btn active" data-color="#1a1a1a" title="Dark">
+            <span class="bg-swatch" style="background:#1a1a1a"></span>Dark
+          </button>
+          <button class="bg-btn" data-color="#ffffff" title="Light">
+            <span class="bg-swatch" style="background:#fff;border-color:#444"></span>Light
+          </button>
+          <button class="bg-btn" data-color="#f97316" title="Orange">
+            <span class="bg-swatch" style="background:#f97316"></span>Orange
+          </button>
+          <button class="bg-btn" data-color="#3b82f6" title="Blue">
+            <span class="bg-swatch" style="background:#3b82f6"></span>Blue
+          </button>
+          <button class="bg-btn" data-color="transparent" title="Transparent">
+            <span class="bg-swatch transparent"></span>None
+          </button>
+        </div>
+      </div>
+      <button class="btn-export" id="btn-export">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span id="btn-export-label">Export for After Effects</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Done Card -->
+  <div class="done-card" id="done-card">
+    <div class="done-hero">
+      <div class="done-icon">
+        <svg viewBox="0 0 18 18"><polyline points="3 9 7 13 15 5"/></svg>
+      </div>
+      <p class="done-title" id="done-title">Ready for After Effects</p>
+      <p class="done-sub" id="done-sub">Your ZIP contains the full PNG sequence and an auto-import script. Extract and follow the steps below.</p>
+    </div>
+    <div class="done-steps" id="done-steps">
+      <div class="section-label" style="margin-bottom:13px">How to import</div>
+      <div class="step-row">
+        <div class="step-n">1</div>
+        <div class="step-t">Extract the downloaded ZIP file to any folder</div>
+      </div>
+      <div class="step-row">
+        <div class="step-n">2</div>
+        <div class="step-t">In After Effects → <code>File</code> → <code>Scripts</code> → <code>Run Script File…</code></div>
+      </div>
+      <div class="step-row">
+        <div class="step-n">3</div>
+        <div class="step-t">Select <code>import_to_ae.jsx</code> — the comp is created automatically</div>
+      </div>
+    </div>
+    <div class="done-actions">
+      <button class="btn-dl" id="btn-download">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span id="done-dl-label">Download ZIP</span>
+      </button>
+      <button class="btn-again" id="btn-reset">Convert another file</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Progress Overlay -->
+<div class="progress-overlay" id="progress-overlay">
+  <div class="prog-panel">
+    <div class="prog-eyebrow" id="prog-eyebrow">Rendering frames</div>
+    <div class="prog-count"><span id="prog-cur">0</span><span class="prog-total"> / <span id="prog-tot">0</span></span></div>
+    <div class="prog-status" id="prog-status">Preparing canvas…</div>
+    <div class="prog-track">
+      <div class="prog-fill" id="progress-bar"></div>
+    </div>
+    <div class="prog-file-info" id="prog-file-info"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─────────────────────────────────────────
+  // State
+  // ─────────────────────────────────────────
+  let animData     = null;
+  let animInfo     = null;
+  let previewAnim  = null;
+  let downloadBlob = null;
+  let isPaused     = false;
+  let fileQueue    = [];  // batch mode
+  let batchMode    = false;
+  let batchRowEls  = [];
+
+  // ─────────────────────────────────────────
+  // DOM refs
+  // ─────────────────────────────────────────
+  const dropZone     = document.getElementById('drop-zone');
+  const fileInput    = document.getElementById('file-input');
+  const mainCard     = document.getElementById('main-card');
+  const doneCard     = document.getElementById('done-card');
+  const progOverlay  = document.getElementById('progress-overlay');
+  const btnExport    = document.getElementById('btn-export');
+  const btnExportLbl = document.getElementById('btn-export-label');
+  const btnDownload  = document.getElementById('btn-download');
+  const btnReset     = document.getElementById('btn-reset');
+  const btnClose     = document.getElementById('btn-close');
+  const btnPlayPause = document.getElementById('btn-playpause');
+  const iconPause    = document.getElementById('icon-pause');
+  const iconPlay     = document.getElementById('icon-play');
+  const progressBar  = document.getElementById('progress-bar');
+  const progCur      = document.getElementById('prog-cur');
+  const progTot      = document.getElementById('prog-tot');
+  const progStatus   = document.getElementById('prog-status');
+  const progEyebrow  = document.getElementById('prog-eyebrow');
+  const guideEl      = document.getElementById('guide');
+  const toastEl      = document.getElementById('toast');
+
+  // ─────────────────────────────────────────
+  // Toast
+  // ─────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg) {
+    clearTimeout(toastTimer);
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3200);
+  }
+
+  // ─────────────────────────────────────────
+  // Drag & Drop — whole page
+  // ─────────────────────────────────────────
+  dropZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => {
+    if (e.target.files.length) handleFiles(e.target.files);
+  });
+
+  // Prevent default on whole document
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop',     e => e.preventDefault());
+
+  // Drop zone specific visuals
+  dropZone.addEventListener('dragenter', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('dragend',   () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    e.stopPropagation(); // prevent bubbling to body handler (would double-process files)
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+    else showToast('Please drop .json (Lottie) files.');
+  });
+
+  // Also accept drop anywhere on page
+  document.body.addEventListener('drop', e => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+  });
+
+  // Format selection + background picker visibility
+  let videoBgColor = '#1a1a1a';
+  const bgPicker = document.getElementById('bg-picker');
+
+  document.querySelectorAll('.fmt-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.fmt-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const fmt = card.querySelector('input').value;
+      if (fmt === 'mp4' || fmt === 'gif') bgPicker.classList.add('visible');
+      else bgPicker.classList.remove('visible');
+    });
+  });
+
+  // Background color buttons
+  document.querySelectorAll('.bg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      videoBgColor = btn.dataset.color;
+    });
+  });
+
+  // Play / Pause
+  btnPlayPause.addEventListener('click', () => {
+    if (!previewAnim) return;
+    if (isPaused) {
+      previewAnim.play();
+      iconPause.style.display = '';
+      iconPlay.style.display  = 'none';
+      isPaused = false;
+    } else {
+      previewAnim.pause();
+      iconPause.style.display = 'none';
+      iconPlay.style.display  = '';
+      isPaused = true;
+    }
+  });
+
+  // Close / Reset
+  function resetAll() {
+    animData = animInfo = downloadBlob = null;
+    fileQueue = []; batchMode = false; batchRowEls = [];
+    if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
+    isPaused = false;
+    iconPause.style.display = '';
+    iconPlay.style.display  = 'none';
+    document.getElementById('preview-container').innerHTML = '';
+    const batchList = document.getElementById('batch-list');
+    batchList.style.display = 'none'; batchList.innerHTML = '';
+    document.querySelector('.preview-area').style.display = '';
+    btnExportLbl.textContent = 'Export for After Effects';
+    fileInput.value = '';
+    dropZone.style.display = '';
+    guideEl.classList.remove('hidden');
+    mainCard.style.display  = 'none';
+    doneCard.style.display  = 'none';
+  }
+  btnClose.addEventListener('click', resetAll);
+  btnReset.addEventListener('click', resetAll);
+
+  // ─────────────────────────────────────────
+  // Batch helpers
+  // ─────────────────────────────────────────
+  function releaseOverlay() {
+    if (!batchMode) { progOverlay.classList.remove('active'); btnExport.disabled = false; }
+  }
+  function onExportSuccess(blob, name, format, ext) {
+    downloadBlob = { blob, name };
+    if (!batchMode) {
+      progOverlay.classList.remove('active');
+      btnExport.disabled = false;
+      updateDoneCard(format, ext);
+      mainCard.style.display = 'none';
+      doneCard.style.display = 'block';
+    }
+  }
+  function autoDownload(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  // ─────────────────────────────────────────
+  // Handle file(s)
+  // ─────────────────────────────────────────
+  function handleFiles(fileList) {
+    const jsonFiles = Array.from(fileList).filter(f => f.name.endsWith('.json'));
+    if (jsonFiles.length === 0) { showToast('Please drop .json (Lottie) files.'); return; }
+    // Single file when NOT already in batch mode → single preview mode
+    if (!batchMode && jsonFiles.length === 1) { handleFile(jsonFiles[0]); return; }
+
+    // Batch mode: append new files to existing queue (don't reset)
+    batchMode = true;
+    let parsed = 0;
+    jsonFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          const baseName = file.name.replace(/\.json$/i, '').replace(/[^\w\-. ]/g, '_').trim() || 'lottie';
+          const w = data.w || 512, h = data.h || 512, fps = data.fr || 30;
+          const frames = Math.floor(data.op - data.ip);
+          fileQueue.push({ animData: data, animInfo: { w, h, fps, frames, duration: (frames/fps).toFixed(2), baseName } });
+        } catch(e) { /* skip invalid */ }
+        if (++parsed === jsonFiles.length) {
+          if (!fileQueue.length) { showToast('No valid Lottie files found.'); batchMode = false; return; }
+          showBatchCard();
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  function handleFile(file) {
+    batchMode = false;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try { animData = JSON.parse(e.target.result); }
+      catch { showToast('Invalid JSON file — please drop a Lottie animation.'); return; }
+      loadPreview(file.name);
+    };
+    reader.readAsText(file);
+  }
+
+  function showBatchCard() {
+    const list = document.getElementById('batch-list');
+    list.innerHTML = ''; batchRowEls = [];
+    fileQueue.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.className = 'batch-row';
+      row.innerHTML = `<div class="batch-row-icon" id="bri-${i}">·</div><div class="batch-row-name">${item.animInfo.baseName}</div><div class="batch-row-badge" id="brb-${i}">Pending</div><button class="batch-row-remove" title="Remove" data-idx="${i}">×</button>`;
+      row.querySelector('.batch-row-remove').addEventListener('click', e => {
+        e.stopPropagation();
+        removeFromBatch(parseInt(e.currentTarget.dataset.idx));
+      });
+      list.appendChild(row);
+      batchRowEls.push(row);
+    });
+    // "+ Add more files" button
+    const addBtn = document.createElement('button');
+    addBtn.className = 'batch-add-btn';
+    addBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg> Add more files`;
+    addBtn.addEventListener('click', () => fileInput.click());
+    list.appendChild(addBtn);
+
+    list.style.display = '';
+    document.querySelector('.preview-area').style.display = 'none';
+    document.getElementById('file-name-text').textContent = `${fileQueue.length} files ready`;
+    btnExportLbl.textContent = `Export All (${fileQueue.length} files)`;
+    dropZone.style.display = 'none';
+    guideEl.classList.add('hidden');
+    mainCard.style.display = 'block';
+    doneCard.style.display = 'none';
+  }
+
+  function removeFromBatch(idx) {
+    fileQueue.splice(idx, 1);
+    if (fileQueue.length === 0) { resetAll(); return; }
+    showBatchCard();
+  }
+
+  async function exportBatch() {
+    const fmt      = document.querySelector('input[name="format"]:checked').value;
+    const fileInfo = document.getElementById('prog-file-info');
+    progOverlay.classList.add('active');
+    btnExport.disabled = true;
+    let doneCount = 0;
+
+    // Collect all results into one ZIP → single download, no browser permission prompt
+    const batchZip = new JSZip();
+
+    for (let i = 0; i < fileQueue.length; i++) {
+      const item = fileQueue[i];
+      batchRowEls[i].className = 'batch-row br-active';
+      document.getElementById(`bri-${i}`).textContent = '▶';
+      document.getElementById(`brb-${i}`).textContent = 'Exporting';
+      batchRowEls[i].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      if (fileInfo) fileInfo.textContent = `${i+1} / ${fileQueue.length} — ${item.animInfo.baseName}`;
+
+      animData = item.animData;
+      animInfo = item.animInfo;
+      downloadBlob = null;
+
+      try {
+        if (fmt === 'png')      await exportPNG();
+        else if (fmt === 'mp4') await exportVideo();
+        else                    await exportGIF();
+      } catch(e) { console.error(e); }
+
+      if (downloadBlob) {
+        if (downloadBlob.name.endsWith('.zip')) {
+          // PNG export: flatten inner ZIP into a named subfolder
+          const inner = await JSZip.loadAsync(downloadBlob.blob);
+          const folder = item.animInfo.baseName;
+          const jobs = [];
+          inner.forEach((path, file) => {
+            if (!file.dir) jobs.push(file.async('arraybuffer').then(buf => batchZip.file(`${folder}/${path}`, buf)));
+          });
+          await Promise.all(jobs);
+        } else {
+          batchZip.file(downloadBlob.name, downloadBlob.blob);
+        }
+        batchRowEls[i].className = 'batch-row br-done';
+        document.getElementById(`bri-${i}`).textContent = '✓';
+        document.getElementById(`brb-${i}`).textContent = 'Done';
+        doneCount++;
+      } else {
+        batchRowEls[i].className = 'batch-row br-error';
+        document.getElementById(`bri-${i}`).textContent = '!';
+        document.getElementById(`brb-${i}`).textContent = 'Error';
+      }
+      downloadBlob = null;
+    }
+
+    if (fileInfo) fileInfo.textContent = '';
+
+    if (doneCount > 0) {
+      // For PNG batch: add a single batch_import.jsx that imports all animations at once
+      if (fmt === 'png') {
+        const successNames = fileQueue
+          .filter((_, i) => batchRowEls[i].classList.contains('br-done'))
+          .map(q => q.animInfo.baseName);
+        const fps = fileQueue[0].animInfo.fps;
+        batchZip.file('batch_import.jsx', buildBatchAEScript(successNames, fps));
+      }
+
+      await setProgress(99, fileQueue.length, 'Creating ZIP…');
+      const zipBlob = await batchZip.generateAsync({ type: 'blob' });
+      const isTransparent = videoBgColor === 'transparent';
+      const fmtLabel = fmt === 'mp4' ? (isTransparent ? 'APNG' : 'MP4')
+                     : fmt === 'gif' ? 'GIF'
+                     : 'PNG';
+      const zipName = `${fileQueue.length} icons · ${fmtLabel}.zip`;
+      autoDownload(zipBlob, zipName);
+    }
+
+    progOverlay.classList.remove('active');
+    btnExport.disabled = false;
+    showToast(`${doneCount} / ${fileQueue.length} files exported`);
+  }
+
+  function loadPreview(fileName) {
+    const w      = animData.w  || 512;
+    const h      = animData.h  || 512;
+    const fps    = animData.fr || 30;
+    const frames   = Math.floor(animData.op - animData.ip);
+    const dur      = (frames / fps).toFixed(2);
+    const baseName = fileName.replace(/\.json$/i, '').replace(/[^\w\-. ]/g, '_').trim() || 'lottie';
+    animInfo       = { w, h, fps, frames, duration: dur, baseName };
+
+    // Update UI
+    document.getElementById('file-name-text').textContent = fileName;
+    document.getElementById('stat-w').textContent      = w;
+    document.getElementById('stat-fps').textContent    = fps;
+    document.getElementById('stat-frames').textContent = frames;
+    document.getElementById('stat-dur').textContent    = dur;
+    btnExportLbl.textContent = `Export ${frames} frames`;
+
+    // Preview
+    const container = document.getElementById('preview-container');
+    container.innerHTML = '';
+    if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
+    previewAnim = lottie.loadAnimation({
+      container,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: animData,
+    });
+    isPaused = false;
+    iconPause.style.display = '';
+    iconPlay.style.display  = 'none';
+
+    dropZone.style.display = 'none';
+    guideEl.classList.add('hidden');
+    mainCard.style.display = 'block';
+    doneCard.style.display = 'none';
+    downloadBlob = null;
+  }
+
+  // ─────────────────────────────────────────
+  // Export router
+  // ─────────────────────────────────────────
+  btnExport.addEventListener('click', () => {
+    if (batchMode) { exportBatch(); return; }
+    const fmt = document.querySelector('input[name="format"]:checked').value;
+    if (fmt === 'png')      exportPNG();
+    else if (fmt === 'mp4') exportVideo();
+    else                    exportGIF();
+  });
+
+  async function setProgress(pct, cur, status) {
+    progressBar.style.width = pct + '%';
+    if (cur !== undefined) progCur.textContent = cur;
+    if (status) progStatus.textContent = status;
+    await new Promise(r => setTimeout(r, 0));
+  }
+
+  // ─────────────────────────────────────────
+  // Shared: spin up lottie canvas renderer
+  // at the correct size, off-screen
+  // ─────────────────────────────────────────
+  async function createRenderer(w, h) {
+    const div = document.createElement('div');
+    // Off-screen but full-size so lottie creates a correctly-sized canvas
+    div.style.cssText = `position:fixed;top:-${h+10}px;left:-${w+10}px;width:${w}px;height:${h}px;overflow:hidden;`;
+    document.body.appendChild(div);
+
+    const anim = lottie.loadAnimation({
+      container: div,
+      renderer: 'canvas',
+      loop: false,
+      autoplay: false,
+      animationData: JSON.parse(JSON.stringify(animData)),
+      rendererSettings: {
+        clearCanvas: true,
+        preserveAspectRatio: 'xMidYMid meet',
+      }
+    });
+
+    await new Promise((res, rej) => {
+      anim.addEventListener('DOMLoaded', res);
+      setTimeout(rej, 8000);
+    });
+
+    const canvas = div.querySelector('canvas');
+    if (!canvas) throw new Error('Lottie canvas not found');
+
+    return { anim, canvas, div };
+  }
+
+  async function exportPNG() {
+    progOverlay.classList.add('active');
+    btnExport.disabled = true;
+    const { w, h, fps, frames, duration } = animInfo;
+    progTot.textContent = frames;
+    await setProgress(0, 0, 'Creating render canvas…');
+
+    const { anim, canvas, div } = await createRenderer(w, h);
+    await setProgress(4, 0, `Rendering ${frames} frames at ${w}×${h}…`);
+
+    const zip          = new JSZip();
+    const framesFolder = zip.folder('frames');
+
+    for (let f = 0; f < frames; f++) {
+      anim.goToAndStop(f, true);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      const buf  = await blob.arrayBuffer();
+      framesFolder.file(`frame_${String(f).padStart(4,'0')}.png`, buf);
+
+      const pct = 4 + (f / frames) * 82;
+      if (f % 4 === 0) await setProgress(pct, f + 1);
+    }
+    await setProgress(88, frames);
+
+    anim.destroy();
+    document.body.removeChild(div);
+    await setProgress(88, frames, 'Writing AE import script…');
+
+    zip.file('import_to_ae.jsx', buildAEScript(animInfo));
+    zip.file('README.txt',       buildReadme(animInfo));
+
+    await setProgress(93, frames, 'Packaging ZIP…');
+
+    const content = await zip.generateAsync({ type: 'blob' }, meta => {
+      setProgress(93 + meta.percent * 0.07, frames, 'Compressing…');
+    });
+
+    await setProgress(100, frames, 'Done!');
+    onExportSuccess(content, `${animInfo.baseName}_ae_export.zip`, 'png', null);
+  }
+
+  // ─────────────────────────────────────────
+  // APNG assembler — zero dependencies
+  // Uses browser's native canvas.toBlob(PNG)
+  // per frame, then stitches APNG binary.
+  // ─────────────────────────────────────────
+  async function encodeAPNG(pngBlobs, delayMs) {
+    const bufs = await Promise.all(pngBlobs.map(b => b.arrayBuffer()));
+
+    // CRC-32
+    const CRC = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let j = 0; j < 8; j++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      CRC[i] = c;
+    }
+    function crc32(b) {
+      let c = 0xFFFFFFFF;
+      for (let i = 0; i < b.length; i++) c = (c >>> 8) ^ CRC[(c ^ b[i]) & 0xFF];
+      return (c ^ 0xFFFFFFFF) >>> 0;
+    }
+
+    // Build one PNG chunk: [len(4)][type(4)][data][crc(4)]
+    function mkChunk(type, data) {
+      const tb  = new TextEncoder().encode(type);
+      const out = new Uint8Array(12 + data.length);
+      const dv  = new DataView(out.buffer);
+      dv.setUint32(0, data.length);
+      out.set(tb, 4); out.set(data, 8);
+      const cb = new Uint8Array(4 + data.length);
+      cb.set(tb); cb.set(data, 4);
+      dv.setUint32(8 + data.length, crc32(cb));
+      return out;
+    }
+
+    // Extract chunks from a PNG ArrayBuffer
+    function parseChunks(ab) {
+      const dv = new DataView(ab); const out = []; let i = 8;
+      while (i < ab.byteLength - 4) {
+        const len  = dv.getUint32(i);
+        const type = String.fromCharCode(dv.getUint8(i+4),dv.getUint8(i+5),dv.getUint8(i+6),dv.getUint8(i+7));
+        out.push({ type, data: new Uint8Array(ab, i+8, len).slice() });
+        i += 12 + len;
+      }
+      return out;
+    }
+
+    const SIG   = new Uint8Array([137,80,78,71,13,10,26,10]);
+    const parts = [SIG];
+    let   seq   = 0;
+    const n     = bufs.length;
+    const fc0   = parseChunks(bufs[0]);
+
+    // IHDR (from first frame)
+    parts.push(mkChunk('IHDR', fc0.find(c => c.type === 'IHDR').data));
+
+    // acTL — animation control
+    const actl = new Uint8Array(8);
+    new DataView(actl.buffer).setUint32(0, n); // num_frames; num_plays=0 (∞)
+    parts.push(mkChunk('acTL', actl));
+
+    for (let fi = 0; fi < n; fi++) {
+      const chunks = fi === 0 ? fc0 : parseChunks(bufs[fi]);
+
+      // fcTL — frame control
+      const fctl = new Uint8Array(26);
+      const fdv  = new DataView(fctl.buffer);
+      fdv.setUint32(0, seq++);           // sequence_number
+      // width/height come from IHDR — read them
+      const ihdr = fc0.find(c => c.type === 'IHDR').data;
+      const idv  = new DataView(ihdr.buffer, ihdr.byteOffset);
+      fdv.setUint32(4,  idv.getUint32(0)); // width
+      fdv.setUint32(8,  idv.getUint32(4)); // height
+      fdv.setUint32(12, 0); fdv.setUint32(16, 0); // x/y offset
+      fdv.setUint16(20, delayMs); fdv.setUint16(22, 1000); // delay num/den
+      fctl[24] = 0; fctl[25] = 0; // dispose=NONE, blend=SOURCE
+      parts.push(mkChunk('fcTL', fctl));
+
+      const idats = chunks.filter(c => c.type === 'IDAT');
+      if (fi === 0) {
+        idats.forEach(c => parts.push(mkChunk('IDAT', c.data)));
+      } else {
+        idats.forEach(c => {
+          const fdat = new Uint8Array(4 + c.data.length);
+          new DataView(fdat.buffer).setUint32(0, seq++);
+          fdat.set(c.data, 4);
+          parts.push(mkChunk('fdAT', fdat));
+        });
+      }
+    }
+
+    parts.push(mkChunk('IEND', new Uint8Array(0)));
+
+    // Concatenate all parts into one buffer
+    const total = parts.reduce((s, p) => s + p.length, 0);
+    const out   = new Uint8Array(total);
+    let   pos   = 0;
+    for (const p of parts) { out.set(p, pos); pos += p.length; }
+    return new Blob([out], { type: 'image/png' });
+  }
+
+  // ─────────────────────────────────────────
+  // Video export
+  // Transparent → APNG (zero-dep, all browsers)
+  // Opaque      → H.264 MP4 (WebCodecs)
+  // ─────────────────────────────────────────
+  async function exportVideo() {
+    progOverlay.classList.add('active');
+    btnExport.disabled = true;
+    progEyebrow.textContent = 'Encoding video';
+
+    const { w, h, fps, frames } = animInfo;
+    const isTransparent = videoBgColor === 'transparent';
+
+    // ── Branch A: Transparent → APNG ──────────────────────────
+    if (isTransparent) {
+      const apngFps   = Math.min(fps, 30);
+      const apngStep  = Math.round(fps / apngFps);
+      const apngCount = Math.ceil(frames / apngStep);
+      const apngDelay = Math.round(1000 / apngFps);
+
+      progTot.textContent = apngCount;
+      await setProgress(0, 0, 'Creating render canvas…');
+
+      const { anim, canvas: lottieCanvas, div } = await createRenderer(w, h);
+      const flat    = document.createElement('canvas');
+      flat.width    = w; flat.height = h;
+      const flatCtx = flat.getContext('2d');
+
+      const pngBlobs = [];
+      let gf = 0;
+      for (let f = 0; f < frames; f += apngStep) {
+        anim.goToAndStop(Math.min(f, frames - 1), true);
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        flatCtx.clearRect(0, 0, w, h);
+        flatCtx.drawImage(lottieCanvas, 0, 0, w, h);
+        const blob = await new Promise(r => flat.toBlob(r, 'image/png'));
+        pngBlobs.push(blob);
+        gf++;
+        const pct = 3 + (gf / apngCount) * 80;
+        progCur.textContent = gf;
+        progressBar.style.width = pct + '%';
+        if (gf % 5 === 0) progStatus.textContent = `Frame ${gf} / ${apngCount}`;
+      }
+
+      anim.destroy();
+      document.body.removeChild(div);
+      await setProgress(85, gf, 'Assembling APNG…');
+
+      const blob = await encodeAPNG(pngBlobs, apngDelay);
+      await setProgress(100, gf, 'Done!');
+      if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+      onExportSuccess(blob, `${animInfo.baseName}.png`, 'apng', null);
+      return;
+    }
+
+    // ── Branch B: Opaque → H.264 MP4 (WebCodecs) ──────────────
+    const LOOPS       = 3;
+    const totalFrames = frames * LOOPS;
+    progTot.textContent = totalFrames;
+    await setProgress(0, 0, 'Loading encoder…');
+
+    if (typeof VideoEncoder === 'undefined') {
+      showToast('WebCodecs not supported — please use Chrome, Edge, or Firefox 130+.');
+      releaseOverlay(); if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+      return;
+    }
+
+    let Muxer, ArrayBufferTarget;
+    try {
+      const mod = await import('https://cdn.jsdelivr.net/npm/mp4-muxer@5/build/mp4-muxer.mjs');
+      Muxer = mod.Muxer; ArrayBufferTarget = mod.ArrayBufferTarget;
+    } catch(e) {
+      showToast('Encoder failed to load — check your internet connection.');
+      releaseOverlay(); if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+      return;
+    }
+
+    const { anim, canvas: lottieCanvas, div } = await createRenderer(w, h);
+    const flat    = document.createElement('canvas');
+    flat.width    = w; flat.height = h;
+    const flatCtx = flat.getContext('2d');
+
+    let chosenCodec = null;
+    for (const codec of ['avc1.640033', 'avc1.4d0033', 'avc1.42001f']) {
+      try {
+        const s = await VideoEncoder.isConfigSupported({ codec, width: w, height: h, bitrate: 20_000_000, framerate: fps });
+        if (s.supported) { chosenCodec = codec; break; }
+      } catch(e) {}
+    }
+    if (!chosenCodec) {
+      showToast('H.264 not supported in this browser.');
+      anim.destroy(); document.body.removeChild(div);
+      releaseOverlay(); if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+      return;
+    }
+
+    await setProgress(3, 0, `Encoding ${totalFrames} frames (${LOOPS}× loops)…`);
+
+    const target = new ArrayBufferTarget();
+    const muxer  = new Muxer({ target, video: { codec: 'avc', width: w, height: h }, fastStart: 'in-memory' });
+
+    let encError = null;
+    const encoder = new VideoEncoder({
+      output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+      error: e => { encError = e; },
+    });
+    encoder.configure({ codec: chosenCodec, width: w, height: h, bitrate: 20_000_000, framerate: fps });
+
+    for (let i = 0; i < totalFrames && !encError; i++) {
+      const frameIdx = i % frames;
+      anim.goToAndStop(frameIdx, true);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      flatCtx.fillStyle = videoBgColor;
+      flatCtx.fillRect(0, 0, w, h);
+      flatCtx.drawImage(lottieCanvas, 0, 0, w, h);
+      const timestamp = Math.round(i * 1_000_000 / fps);
+      const vf = new VideoFrame(flat, { timestamp });
+      encoder.encode(vf, { keyFrame: frameIdx === 0 });
+      vf.close();
+      const pct = 3 + ((i + 1) / totalFrames) * 90;
+      progCur.textContent = i + 1;
+      progressBar.style.width = pct + '%';
+      if ((i + 1) % 15 === 0) progStatus.textContent = `Frame ${i + 1} / ${totalFrames}`;
+    }
+
+    await setProgress(95, totalFrames, 'Finalizing…');
+    await encoder.flush();
+    muxer.finalize();
+    anim.destroy();
+    document.body.removeChild(div);
+    if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+
+    if (encError) {
+      showToast('Encoding error: ' + encError.message);
+      releaseOverlay();
+      return;
+    }
+
+    const blob = new Blob([target.buffer], { type: 'video/mp4' });
+    await setProgress(100, totalFrames, 'Done!');
+    onExportSuccess(blob, `${animInfo.baseName}.mp4`, 'video', 'MP4');
+  }
+
+  // ─────────────────────────────────────────
+  // GIF export (gif.js)
+  // ─────────────────────────────────────────
+  async function exportGIF() {
+    if (typeof GIF === 'undefined') {
+      showToast('GIF library not loaded — please refresh the page.');
+      return;
+    }
+
+    progOverlay.classList.add('active');
+    btnExport.disabled = true;
+    progEyebrow.textContent = 'Encoding GIF';
+
+    const { w, h, fps, frames } = animInfo;
+
+    // GIF max meaningful fps is ~30 (20ms minimum frame delay)
+    const gifFps    = Math.min(fps, 30);
+    const gifStep   = Math.round(fps / gifFps);
+    const gifFrames = Math.ceil(frames / gifStep);
+    const gifDelay  = Math.round(1000 / gifFps);
+
+    progTot.textContent = gifFrames;
+    await setProgress(0, 0, 'Creating render canvas…');
+
+    const { anim, canvas: lottieCanvas, div } = await createRenderer(w, h);
+    await setProgress(3, 0, `Rendering ${gifFrames} frames…`);
+
+    // Fetch worker as blob URL to avoid CORS issues
+    let workerScript = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js';
+    try {
+      const r = await fetch(workerScript);
+      if (r.ok) workerScript = URL.createObjectURL(await r.blob());
+    } catch(e) {}
+
+    // For transparent GIF: color-key approach (GIF supports 1-bit alpha only)
+    const isTransparent = videoBgColor === 'transparent';
+    const KEY = isTransparent ? 0x00FE01 : null; // near-lime key color
+
+    const gif = new GIF({ workers: 4, quality: 1, repeat: 0, workerScript, width: w, height: h, transparent: KEY });
+
+    const flat    = document.createElement('canvas');
+    flat.width    = w;
+    flat.height   = h;
+    const flatCtx = flat.getContext('2d');
+
+    let gf = 0;
+    for (let f = 0; f < frames; f += gifStep) {
+      anim.goToAndStop(Math.min(f, frames - 1), true);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      if (isTransparent) {
+        // Threshold alpha → replace transparent pixels with key color
+        flatCtx.clearRect(0, 0, w, h);
+        flatCtx.drawImage(lottieCanvas, 0, 0, w, h);
+        const imgData = flatCtx.getImageData(0, 0, w, h);
+        const d = imgData.data;
+        for (let p = 0; p < d.length; p += 4) {
+          if (d[p+3] < 128) { d[p] = 0; d[p+1] = 254; d[p+2] = 1; d[p+3] = 255; }
+          else { d[p+3] = 255; }
+        }
+        flatCtx.putImageData(imgData, 0, 0);
+      } else {
+        flatCtx.fillStyle = videoBgColor;
+        flatCtx.fillRect(0, 0, w, h);
+        flatCtx.drawImage(lottieCanvas, 0, 0, w, h);
+      }
+
+      gif.addFrame(flat, { copy: true, delay: gifDelay });
+      gf++;
+
+      const pct = 3 + (gf / gifFrames) * 67;
+      if (gf % 4 === 0) await setProgress(pct, gf, `Frame ${gf} / ${gifFrames}`);
+      else { progCur.textContent = gf; progressBar.style.width = pct+'%'; }
+    }
+
+    anim.destroy();
+    document.body.removeChild(div);
+    await setProgress(72, gf, 'Encoding GIF — please wait…');
+
+    await new Promise(resolve => {
+      gif.on('progress', p => {
+        progressBar.style.width = (72 + p * 28) + '%';
+        progStatus.textContent  = `Encoding… ${Math.round(p * 100)}%`;
+      });
+      gif.on('finished', blob => {
+        if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+        onExportSuccess(blob, `${animInfo.baseName}.gif`, 'gif', null);
+        resolve();
+      });
+      gif.render();
+    });
+  }
+
+  // ─────────────────────────────────────────
+  // Dynamic done card
+  // ─────────────────────────────────────────
+  function updateDoneCard(format, ext) {
+    const title  = document.getElementById('done-title');
+    const sub    = document.getElementById('done-sub');
+    const steps  = document.getElementById('done-steps');
+    const dlLbl  = document.getElementById('done-dl-label');
+
+    if (format === 'png') {
+      title.textContent = 'Ready for After Effects';
+      sub.textContent   = 'Your ZIP contains the full PNG sequence and an auto-import script. Extract and follow the steps below.';
+      steps.style.display = '';
+      dlLbl.textContent = 'Download ZIP';
+    } else if (format === 'apng') {
+      title.textContent = 'Animated PNG ready';
+      sub.textContent   = 'Şeffaf arka plan · Her modern tarayıcı, Figma, sunum ve PNG destekleyen her uygulama açar.';
+      steps.style.display = 'none';
+      dlLbl.textContent = 'Download APNG';
+    } else if (format === 'video') {
+      title.textContent = 'Video file ready';
+      sub.textContent   = `High quality ${ext || 'MP4'} — drag it directly into After Effects, Premiere Pro, DaVinci Resolve, or any video editor.`;
+      steps.style.display = 'none';
+      dlLbl.textContent = `Download ${ext || 'MP4'}`;
+    } else if (format === 'gif') {
+      title.textContent = 'GIF is ready';
+      sub.textContent   = 'Drop it into emails, docs, Figma, presentations — works everywhere.';
+      steps.style.display = 'none';
+      dlLbl.textContent = 'Download GIF';
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // ─────────────────────────────────────────
+  // Batch AE Script — imports all animations
+  // ─────────────────────────────────────────
+  function buildBatchAEScript(names, fps) {
+    const list = names.map(n => `"${n.replace(/"/g, '\\"')}"`).join(', ');
+    return `// ─────────────────────────────────────────────────
+// Lottie Batch Import — After Effects Script
+// HOW TO USE:
+//   File → Scripts → Run Script File… → select this file
+// ─────────────────────────────────────────────────
+(function batchImport() {
+  app.beginUndoGroup("Import Lottie Batch");
+  var scriptFile   = new File($.fileName);
+  var scriptFolder = scriptFile.parent;
+  var names        = [${list}];
+  var fps          = ${fps};
+  var imported     = 0;
+
+  for (var i = 0; i < names.length; i++) {
+    var framesDir = new Folder(scriptFolder.absoluteURI + "/" + names[i] + "/frames");
+    if (!framesDir.exists) { alert("Frames not found: " + names[i]); continue; }
+    var first = new File(framesDir.absoluteURI + "/frame_0000.png");
+    if (!first.exists) { continue; }
+    var io = new ImportOptions(first);
+    io.sequence = true;
+    io.forceAlphabetical = true;
+    var footage = app.project.importFile(io);
+    footage.mainSource.conformFrameRate = fps;
+    footage.name = names[i];
+    imported++;
+  }
+
+  app.endUndoGroup();
+  alert("Done! " + imported + " / " + names.length + " animations imported.");
+})();
+`;
+  }
+
+  // AE Script
+  // ─────────────────────────────────────────
+  function buildAEScript({ w, h, fps, frames, duration }) {
+    return `// ─────────────────────────────────────────────────
+// Lottie → After Effects — Auto Import Script
+// Generated by Lottie-to-AE Converter
+// ─────────────────────────────────────────────────
+// HOW TO USE:
+//   After Effects → File → Scripts → Run Script File…
+//   Select this file. Done!
+// ─────────────────────────────────────────────────
+
+(function importLottieFrames() {
+  app.beginUndoGroup("Import Lottie Sequence");
+
+  var scriptFile   = new File($.fileName);
+  var scriptFolder = scriptFile.parent;
+  var framesFolder = new Folder(scriptFolder.absoluteURI + "/frames");
+
+  if (!framesFolder.exists) {
+    alert("ERROR: 'frames' folder not found.\\nMake sure this .jsx is in the same folder as the 'frames' folder.");
+    return;
+  }
+
+  var firstFrame = new File(framesFolder.absoluteURI + "/frame_0000.png");
+  if (!firstFrame.exists) {
+    alert("ERROR: frame_0000.png not found in the frames folder.");
+    return;
+  }
+
+  var io = new ImportOptions(firstFrame);
+  io.sequence = true;
+  io.forceAlphabetical = true;
+
+  var footage;
+  try { footage = app.project.importFile(io); }
+  catch(err) { alert("Import failed: " + err.toString()); return; }
+
+  footage.mainSource.conformFrameRate = ${fps};
+  footage.name = "Lottie Animation";
+
+  var compName = "Lottie_" + ${w} + "x" + ${h} + "_" + ${fps} + "fps";
+  var comp = app.project.items.addComp(
+    compName, ${w}, ${h}, 1, ${parseFloat(duration)}, ${fps}
+  );
+
+  comp.layers.add(footage, ${parseFloat(duration)});
+  comp.openInViewer();
+  app.endUndoGroup();
+
+  alert("Success!\\n\\nComposition created:\\n${w}x${h} @ ${fps}fps\\n${frames} frames / ${duration}s");
+})();
+`;
+  }
+
+  function buildReadme({ w, h, fps, frames, duration }) {
+    return `LOTTIE → AFTER EFFECTS EXPORT
+===============================
+
+Animation Info
+--------------
+Resolution : ${w} x ${h} px
+Frame Rate : ${fps} fps
+Frames     : ${frames}
+Duration   : ${duration} seconds
+Alpha      : Yes (transparent background)
+
+Contents
+--------
+/frames/           PNG sequence (frame_0000.png … frame_${String(frames-1).padStart(4,'0')}.png)
+import_to_ae.jsx   After Effects auto-import script
+README.txt         This file
+
+Quick Import (Recommended)
+--------------------------
+1. Extract this ZIP
+2. Open After Effects
+3. File → Scripts → Run Script File…
+4. Select "import_to_ae.jsx"
+5. Done — comp is created automatically.
+
+Manual Import
+-------------
+1. File → Import → File…
+2. Select "frame_0000.png" and check "PNG Sequence"
+3. Right-click footage → Interpret Footage → Main → set ${fps} fps
+4. Create new comp: ${w}x${h}, ${fps}fps, ${duration}s
+5. Drag footage into comp
+
+Generated by Lottie → After Effects Converter
+`;
+  }
+
+  // ─────────────────────────────────────────
+  // Download
+  // ─────────────────────────────────────────
+  btnDownload.addEventListener('click', () => {
+    if (!downloadBlob) return;
+    const url = URL.createObjectURL(downloadBlob.blob);
+    const a   = document.createElement('a');
+    a.href = url;
+    a.download = downloadBlob.name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  });
+</script>
+</body>
+</html>
