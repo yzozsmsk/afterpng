@@ -1215,6 +1215,52 @@
       transition: border-color .15s, color .15s;
     }
     .svg-actions .svg-btn:hover { border-color: var(--border-hi); color: var(--text); }
+    .svg-split-btn {
+      width: 100%; height: 30px; margin-top: 6px;
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text-3);
+      font-family: inherit; font-size: 11px; font-weight: 500;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+      display: none;
+    }
+    .svg-split-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .svg-split-btn:disabled { opacity: .4; cursor: default; pointer-events: none; }
+    .svg-thumbs-grid {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(66px, 1fr));
+      gap: 5px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .svg-thumbs-grid.visible { display: grid; }
+    .svg-thumb-cell {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 5px 4px 4px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      cursor: pointer;
+      transition: border-color .12s, background .12s;
+      overflow: hidden;
+      min-width: 0;
+    }
+    .svg-thumb-cell:hover { border-color: var(--border-hi); }
+    .svg-thumb-cell.selected { border-color: var(--accent); background: var(--accent-glow); }
+    .svg-thumb-cell svg { width: 100%; height: 50px; display: block; }
+    .svg-thumb-placeholder {
+      width: 100%; height: 50px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); font-size: 18px;
+    }
+    .svg-thumb-name {
+      font-size: 8.5px; color: var(--text-2);
+      text-align: center; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; width: 100%;
+    }
 
     /* ── Separate Layers Toggle ── */
     .sep-layers-row {
@@ -1432,9 +1478,11 @@
         <span class="svg-frame-label" id="svg-frame-label">0 / 0</span>
       </div>
       <div class="svg-actions">
-        <button class="svg-btn" id="btn-svg-download">SVG &#x130;ndir</button>
+        <button class="svg-btn" id="btn-svg-download">SVG İndir</button>
         <button class="svg-btn" id="btn-svg-copy">Kodu Kopyala</button>
       </div>
+      <button class="svg-split-btn" id="btn-svg-split">↓ Hepsini Ayrı SVG — ZIP İndir</button>
+      <div class="svg-thumbs-grid" id="svg-thumbs-grid"></div>
     </div>
 
     <div class="export-area">
@@ -2608,14 +2656,24 @@
 
   function renderSVGSection() {
     const section = document.getElementById('svg-section');
-    if (!animData || batchMode) { section.style.display = 'none'; destroySVGRenderer(); return; }
+    if (!animData || batchMode) {
+      section.style.display = 'none';
+      document.getElementById('svg-thumbs-grid').classList.remove('visible');
+      document.getElementById('btn-svg-split').style.display = 'none';
+      destroySVGRenderer();
+      return;
+    }
     section.style.display = 'block';
     const slider = document.getElementById('svg-frame-slider');
+    slider.value = 0;
     const frames = animInfo?.frames || 1;
     slider.max = frames - 1;
-    document.getElementById('svg-frame-label').textContent = (slider.value || 0) + ' / ' + (frames - 1);
-    document.getElementById('svg-frame-badge').textContent = slider.value || 0;
+    document.getElementById('svg-frame-label').textContent = '0 / ' + (frames - 1);
+    document.getElementById('svg-frame-badge').textContent = '0';
+    window._svgActiveLayer = null;
+    _thumbSVGs = [];
     initSVGRenderer();
+    populateSVGLayerGrid();
   }
 
   // Frame slider
@@ -2626,30 +2684,212 @@
     updateSVGPreview();
   });
 
-  // Download button
+  // Download button — uses active layer if thumbnail was clicked, otherwise full frame
   document.getElementById('btn-svg-download').addEventListener('click', () => {
-    const src = getSVGString();
+    const active = window._svgActiveLayer;
+    const src  = active ? active.str  : getSVGString();
+    const name = active ? active.name : (animInfo?.baseName || 'frame') + '_frame' + (document.getElementById('svg-frame-slider').value || 0);
     if (!src) return;
     const blob = new Blob([src], { type: 'image/svg+xml' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = (animInfo?.baseName || 'frame') + '_frame' + (document.getElementById('svg-frame-slider').value || 0) + '.svg';
+    a.download = name + '.svg';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   });
 
   // Copy button
   document.getElementById('btn-svg-copy').addEventListener('click', async () => {
-    const src = getSVGString();
+    const active = window._svgActiveLayer;
+    const src = active ? active.str : getSVGString();
     if (!src) return;
     const btn = document.getElementById('btn-svg-copy');
     try {
       await navigator.clipboard.writeText(src);
-      btn.textContent = 'Kopyaland\u0131!';
+      btn.textContent = 'Kopyalandı!';
     } catch(e) {
       btn.textContent = 'Hata';
     }
     setTimeout(() => { btn.textContent = 'Kodu Kopyala'; }, 1500);
+  });
+
+  // ─────────────────────────────────────────
+  // Layer thumbnail grid + ZIP export
+  // ─────────────────────────────────────────
+  let _thumbSVGs = []; // cached SVG strings per visible layer index
+
+  // Render one layer in isolation as SVG at a given frame
+  async function renderLayerAsSVG(isolatedData, frame, ip) {
+    return new Promise(resolve => {
+      const div = document.createElement('div');
+      div.style.cssText = `position:fixed;left:-9999px;top:0;width:${isolatedData.w}px;height:${isolatedData.h}px;visibility:hidden;pointer-events:none;`;
+      document.body.appendChild(div);
+      const anim = lottie.loadAnimation({
+        container: div, renderer: 'svg', loop: false, autoplay: false,
+        animationData: JSON.parse(JSON.stringify(isolatedData)),
+      });
+      const timer = setTimeout(() => {
+        try { anim.destroy(); } catch(e) {}
+        div.remove(); resolve(null);
+      }, 8000);
+      anim.addEventListener('DOMLoaded', () => {
+        clearTimeout(timer);
+        anim.goToAndStop((ip || 0) + frame, true);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          const el = div.querySelector('svg');
+          let str = null;
+          if (el) {
+            const c = el.cloneNode(true);
+            c.removeAttribute('style');
+            c.setAttribute('width',   isolatedData.w);
+            c.setAttribute('height',  isolatedData.h);
+            c.setAttribute('viewBox', `0 0 ${isolatedData.w} ${isolatedData.h}`);
+            c.setAttribute('xmlns',   'http://www.w3.org/2000/svg');
+            str = '<?xml version="1.0" encoding="UTF-8"?>\n' + c.outerHTML;
+          }
+          try { anim.destroy(); } catch(e) {}
+          div.remove();
+          resolve(str);
+        }));
+      });
+    });
+  }
+
+  function makeSVGDOMFromString(str, w, h) {
+    const stripped = str.replace(/<\?xml[^>]*\?>\n?/, '');
+    try {
+      const doc = new DOMParser().parseFromString(stripped, 'image/svg+xml');
+      const el = doc.documentElement;
+      el.removeAttribute('width'); el.removeAttribute('height');
+      el.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      el.style.cssText = 'width:100%;height:50px;display:block;';
+      return el;
+    } catch(e) { return null; }
+  }
+
+  async function populateSVGLayerGrid() {
+    const grid     = document.getElementById('svg-thumbs-grid');
+    const splitBtn = document.getElementById('btn-svg-split');
+    if (!animData) { grid.classList.remove('visible'); splitBtn.style.display = 'none'; return; }
+
+    const allLayers = getEditableLayers(animData);
+    const visible   = allLayers.filter(l => { const ov = layerOverrides[l.key]; return !ov || ov.visible !== false; });
+
+    if (visible.length <= 1) {
+      grid.classList.remove('visible');
+      splitBtn.style.display = 'none';
+      _thumbSVGs = [];
+      window._svgActiveLayer = null;
+      return;
+    }
+
+    grid.classList.add('visible');
+    splitBtn.style.display = 'block';
+    grid.innerHTML = '';
+    _thumbSVGs = new Array(visible.length).fill(null);
+    window._svgActiveLayer = null;
+
+    const frame = parseInt(document.getElementById('svg-frame-slider')?.value || 0);
+    const ip    = animInfo?.ip || 0;
+    const W = animData.w, H = animData.h;
+
+    for (let li = 0; li < visible.length; li++) {
+      const layerDef = visible[li];
+      const cell = document.createElement('div');
+      cell.className = 'svg-thumb-cell';
+      cell.innerHTML = `<div class="svg-thumb-placeholder">⋯</div><span class="svg-thumb-name" title="${escapeHtml(layerDef.name)}">${escapeHtml(layerDef.name)}</span>`;
+      grid.appendChild(cell);
+
+      // Build isolated copy
+      const copy = JSON.parse(JSON.stringify(animData));
+      applyOverridesToData(copy, layerOverrides);
+      visible.forEach(other => {
+        if (other.key === layerDef.key) return;
+        const lo = resolveLayer(copy, other.key);
+        if (lo) { lo.ks = lo.ks || {}; lo.ks.o = { a: 0, k: 0 }; }
+      });
+
+      const svgStr = await renderLayerAsSVG(copy, frame, ip);
+      _thumbSVGs[li] = svgStr;
+
+      if (svgStr) {
+        const thumbEl = makeSVGDOMFromString(svgStr, W, H);
+        const safeName = layerDef.name.replace(/[^\w\-. ]/g, '_').trim() || `icon_${li + 1}`;
+
+        cell.innerHTML = '';
+        if (thumbEl) cell.appendChild(thumbEl);
+        const nm = document.createElement('span');
+        nm.className = 'svg-thumb-name';
+        nm.title = layerDef.name;
+        nm.textContent = layerDef.name;
+        cell.appendChild(nm);
+
+        cell.addEventListener('click', () => {
+          // Show in main preview
+          const box = document.getElementById('svg-preview-box');
+          const preview = makeSVGDOMFromString(svgStr, W, H);
+          if (preview) { cleanSVG(preview, W, H); box.innerHTML = ''; box.appendChild(preview); }
+          // Mark as active for download/copy
+          window._svgActiveLayer = { str: svgStr, name: safeName };
+          // Highlight
+          grid.querySelectorAll('.svg-thumb-cell').forEach(c => c.classList.remove('selected'));
+          cell.classList.add('selected');
+        });
+      }
+    }
+  }
+
+  // Clear active layer selection when frame changes
+  document.getElementById('svg-frame-slider').addEventListener('change', () => {
+    window._svgActiveLayer = null;
+    document.getElementById('svg-thumbs-grid')?.querySelectorAll('.svg-thumb-cell')
+      .forEach(c => c.classList.remove('selected'));
+    // Re-render thumbs at new frame
+    populateSVGLayerGrid();
+  });
+
+  // ZIP download
+  document.getElementById('btn-svg-split').addEventListener('click', async () => {
+    const allLayers = getEditableLayers(animData);
+    const visible = allLayers.filter(l => { const ov = layerOverrides[l.key]; return !ov || ov.visible !== false; });
+    if (!visible.length) return;
+
+    const btn = document.getElementById('btn-svg-split');
+    btn.disabled = true;
+
+    const frame = parseInt(document.getElementById('svg-frame-slider')?.value || 0);
+    const ip    = animInfo?.ip || 0;
+    const zip   = new JSZip();
+
+    for (let li = 0; li < visible.length; li++) {
+      btn.textContent = `${li + 1} / ${visible.length} işleniyor…`;
+      const layerDef = visible[li];
+      const safeName = layerDef.name.replace(/[^\w\-. ]/g, '_').trim() || `icon_${li + 1}`;
+
+      let svgStr = _thumbSVGs[li]; // reuse cached if available
+      if (!svgStr) {
+        const copy = JSON.parse(JSON.stringify(animData));
+        applyOverridesToData(copy, layerOverrides);
+        visible.forEach(other => {
+          if (other.key === layerDef.key) return;
+          const lo = resolveLayer(copy, other.key);
+          if (lo) { lo.ks = lo.ks || {}; lo.ks.o = { a: 0, k: 0 }; }
+        });
+        svgStr = await renderLayerAsSVG(copy, frame, ip);
+      }
+      if (svgStr) zip.file(safeName + '.svg', svgStr);
+    }
+
+    btn.textContent = 'ZIP hazırlanıyor…';
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (animInfo?.baseName || 'icons') + '_svgs.zip';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+
+    btn.disabled = false;
+    btn.textContent = '↓ Hepsini Ayrı SVG — ZIP İndir';
   });
 
   // ─────────────────────────────────────────
