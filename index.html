@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AfterPNG</title>
-  <meta name="description" content="Convert Lottie JSON animations to PNG sequence, MP4, or GIF for After Effects. Free online tool — no install needed." />
-  <meta name="keywords" content="lottie to after effects, lottie converter, lottie to PNG, lottie to MP4, lottie to GIF, AE import, animation converter" />
-  <meta property="og:title" content="AfterPNG — Lottie to After Effects Converter" />
-  <meta property="og:description" content="Convert Lottie JSON animations to PNG sequence, MP4, or GIF. Free online tool." />
+  <meta name="description" content="Convert animations to PNG sequence, MP4, or GIF for After Effects. Free online tool — no install needed." />
+  <meta name="keywords" content="afterpng, animation to after effects, animation converter, PNG sequence, AE import" />
+  <meta property="og:title" content="AfterPNG" />
+  <meta property="og:description" content="Convert animations to PNG sequence, MP4, or GIF. Free online tool." />
   <meta property="og:url" content="https://yzozsmsk.github.io/afterpng" />
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,6 +34,51 @@
       --r-xl: 18px;
       --r-md: 12px;
       --r-sm: 8px;
+    }
+    html[data-theme="light"] {
+      --bg: #f5f5f3;
+      --surface: #ffffff;
+      --surface2: #f0f0ee;
+      --border: #e3e3e0;
+      --border-hi: #c5c5c2;
+      --accent: #ff5c35;
+      --accent-glow: rgba(255, 92, 53, 0.10);
+      --text: #1c1c1a;
+      --text-2: #72716e;
+      --text-3: #b3b3b0;
+      --green: #16a34a;
+    }
+    html[data-theme="light"] body {
+      background-image: radial-gradient(ellipse 90% 40% at 50% -5%, rgba(255,92,53,0.05) 0%, transparent 60%);
+    }
+    html[data-theme="light"] .preview-area { background: #e8e8e6; }
+    html[data-theme="light"] .preview-wrap {
+      background-color: #e0e0de;
+      background-image:
+        linear-gradient(45deg,#d4d4d2 25%,transparent 25%),
+        linear-gradient(-45deg,#d4d4d2 25%,transparent 25%),
+        linear-gradient(45deg,transparent 75%,#d4d4d2 75%),
+        linear-gradient(-45deg,transparent 75%,#d4d4d2 75%);
+    }
+    html[data-theme="light"] .blp-preview-container {
+      background-color: #e0e0de;
+      background-image:
+        linear-gradient(45deg,#d4d4d2 25%,transparent 25%),
+        linear-gradient(-45deg,#d4d4d2 25%,transparent 25%),
+        linear-gradient(45deg,transparent 75%,#d4d4d2 75%),
+        linear-gradient(-45deg,transparent 75%,#d4d4d2 75%);
+    }
+    html[data-theme="light"] .progress-overlay { background: rgba(235,235,233,.94); }
+    html[data-theme="light"] .toast { background: #fff8f6; border-color: #ffc4ae; color: #c43316; }
+    html[data-theme="light"] .bg-swatch.transparent {
+      background: repeating-conic-gradient(#c5c5c3 0% 25%, #e0e0de 0% 50%) 0 0 / 6px 6px;
+    }
+    html[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--border-hi); }
+    html[data-theme="light"] .layer-color-btn {
+      background-image: linear-gradient(45deg,#d4d4d2 25%,transparent 25%),
+                        linear-gradient(-45deg,#d4d4d2 25%,transparent 25%),
+                        linear-gradient(45deg,transparent 75%,#d4d4d2 75%),
+                        linear-gradient(-45deg,transparent 75%,#d4d4d2 75%);
     }
 
     body {
@@ -510,6 +555,27 @@
       margin-bottom: 4px;
     }
     .batch-layer-panel .layer-row { padding: 3px 4px; }
+    .blp-layout { display: flex; gap: 10px; align-items: flex-start; }
+    .blp-preview-wrap { flex-shrink: 0; }
+    .blp-preview-container {
+      width: 80px; height: 80px;
+      background-color: #0a0a0a;
+      background-image:
+        linear-gradient(45deg,#151515 25%,transparent 25%),
+        linear-gradient(-45deg,#151515 25%,transparent 25%),
+        linear-gradient(45deg,transparent 75%,#151515 75%),
+        linear-gradient(-45deg,transparent 75%,#151515 75%);
+      background-size: 10px 10px;
+      background-position: 0 0,0 5px,5px -5px,-5px 0;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .blp-controls { flex: 1; min-width: 0; }
+    .blp-controls-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 6px;
+    }
     .batch-add-btn {
       display: flex; align-items: center; justify-content: center; gap: 5px;
       width: 100%; padding: 7px 12px;
@@ -735,6 +801,25 @@
       transition: border-color .15s, color .15s;
     }
     .btn-again:hover { border-color: var(--border-hi); color: var(--text); }
+    .btn-edit-again {
+      width: 100%;
+      height: 38px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text-2);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-edit-again:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-edit-again svg { stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 
     /* ── Format Guide ── */
     .guide {
@@ -976,10 +1061,11 @@
       padding: 2px 2px;
       font-family: inherit;
       -moz-appearance: textfield;
+      cursor: ew-resize;
     }
     .layer-opacity-input::-webkit-inner-spin-button,
     .layer-opacity-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-    .layer-opacity-input:focus { outline: none; border-color: var(--accent); }
+    .layer-opacity-input:focus { cursor: text; outline: none; border-color: var(--accent); }
     .layer-color-btn {
       width: 20px; height: 20px;
       border-radius: 4px;
@@ -998,14 +1084,6 @@
       transition: border-color .12s;
     }
     .layer-color-btn.has-color { border-color: var(--border-hi); background-image: none; }
-    .layer-color-input {
-      position: absolute;
-      inset: -8px;
-      opacity: 0;
-      cursor: pointer;
-      width: 200%;
-      height: 200%;
-    }
     .layer-color-reset-btn {
       width: 14px; height: 14px;
       background: none;
@@ -1041,6 +1119,69 @@
     }
     .layer-solo-btn:hover { color: var(--text); border-color: var(--border-hi); }
     .layer-solo-btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-glow); }
+
+    /* ── Separate Layers Toggle ── */
+    .sep-layers-row {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      user-select: none;
+      transition: border-color .15s, background .15s;
+    }
+    .sep-layers-row.visible { display: flex; }
+    .sep-layers-row:hover { border-color: var(--border-hi); }
+    .sep-layers-row.active { border-color: var(--accent); background: var(--accent-glow); }
+    .sl-knob {
+      width: 28px; height: 16px;
+      border-radius: 100px;
+      background: var(--border-hi);
+      flex-shrink: 0;
+      position: relative;
+      transition: background .15s;
+    }
+    .sl-knob::after {
+      content: '';
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      top: 2px; left: 2px;
+      transition: transform .15s;
+      opacity: .55;
+    }
+    .sep-layers-row.active .sl-knob { background: var(--accent); }
+    .sep-layers-row.active .sl-knob::after { transform: translateX(12px); opacity: 1; }
+    .sl-info { flex: 1; min-width: 0; }
+    .sl-title { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+    .sl-desc  { font-size: 10.5px; color: var(--text-2); margin-top: 2px; line-height: 1.4; }
+
+    /* ── Theme Toggle ── */
+    .header { position: relative; }
+    .theme-toggle {
+      position: absolute;
+      top: 2px; right: 0;
+      width: 32px; height: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+      transition: border-color .15s, color .15s, background .15s, transform .25s cubic-bezier(.34,1.56,.64,1);
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { border-color: var(--border-hi); color: var(--text); background: var(--surface2); transform: rotate(22deg) scale(1.05); }
+    .theme-toggle svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; pointer-events: none; }
+    html[data-theme="light"]  .theme-icon-moon { display: none; }
+    html[data-theme="dark"]   .theme-icon-sun  { display: none; }
   </style>
 </head>
 <body>
@@ -1048,14 +1189,18 @@
 
   <!-- Header -->
   <header class="header">
+    <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle theme">
+      <svg class="theme-icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="theme-icon-sun"  viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
     <div class="logo">
       <div class="logo-icon">
         <svg viewBox="0 0 12 12"><path d="M2 2h2v2H2zM8 2h2v2H8zM2 8h2v2H2zM8 8h2v2H8zM4.5 5l3 1.5-3 1.5z"/></svg>
       </div>
-      <span class="logo-text">Lottie → AE</span>
+      <span class="logo-text">AfterPNG</span>
     </div>
     <h1 class="h-title">Export animations<br>to <em>After Effects</em></h1>
-    <p class="h-sub">Drop one or more Lottie JSON files — export as<br>PNG, MP4, APNG or GIF. Batch supported.</p>
+    <p class="h-sub">Drop one or more JSON animation files — export as<br>PNG, MP4, APNG or GIF. Batch supported.</p>
   </header>
 
   <!-- Drop Zone -->
@@ -1067,7 +1212,7 @@
         <line x1="12" y1="3" x2="12" y2="15"/>
       </svg>
     </div>
-    <p class="dz-title">Drop your Lottie file here</p>
+    <p class="dz-title">Drop your animation file here</p>
     <div class="dz-tag">
       <div class="dz-dot"></div>
       Accepts .json files only · or click to browse
@@ -1082,31 +1227,31 @@
 
       <div class="gc" style="--c: #4ade80">
         <div class="gc-badge">PNG + Script</div>
-        <div class="gc-title">After Effects &amp; professional use</div>
+        <div class="gc-title">After Effects &amp; profesyonel</div>
         <ul class="gc-list">
+          <li>Layer bazlı düzenleme</li>
           <li>Sıfır kalite kaybı, lossless</li>
-          <li>Şeffaf arka plan (alfa kanalı)</li>
+          <li>Şeffaf arka plan (alfa)</li>
           <li>Otomatik AE import scripti</li>
-          <li>Motion graphics &amp; compositing</li>
         </ul>
         <div class="gc-how">
           <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">ZIP'i çıkart → AE'de <code>File → Scripts → Run Script File…</code> → <code>import_to_ae.jsx</code> seç → comp otomatik oluşur. Toplu export'ta <code>batch_import.jsx</code> tüm animasyonları tek seferde ekler.</p>
+          <p class="gc-how-text">ZIP'i çıkart → AE'de <code>File → Scripts → Run Script File…</code> → <code>import_to_ae.jsx</code> seç. Toplu export'ta <code>batch_import.jsx</code> tüm animasyonları bir kerede ekler.</p>
         </div>
       </div>
 
       <div class="gc" style="--c: #60a5fa">
         <div class="gc-badge">MP4 / APNG</div>
-        <div class="gc-title">Video editörler &amp; sosyal medya</div>
+        <div class="gc-title">Video &amp; sosyal medya</div>
         <ul class="gc-list">
           <li>Yüksek kalite MP4 (20 Mbps)</li>
           <li>Premiere, DaVinci, Final Cut</li>
-          <li>"None" seçince → APNG (şeffaf)</li>
-          <li>APNG her tarayıcıda çalışır</li>
+          <li>"None" seçince → şeffaf APNG</li>
+          <li>Tüm tarayıcılarda çalışır</li>
         </ul>
         <div class="gc-how">
           <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">İndir → video editörüne sürükle · Şeffaf için "None" seç → APNG alırsın</p>
+          <p class="gc-how-text">İndir → video editörüne sürükle. Şeffaf arka plan için arka plan rengini "None" seç → APNG çıkar.</p>
         </div>
       </div>
 
@@ -1114,14 +1259,14 @@
         <div class="gc-badge">Animated GIF</div>
         <div class="gc-title">Web, e-posta &amp; her yer</div>
         <ul class="gc-list">
-          <li>Her yerde çalışır, plugin yok</li>
-          <li>Figma, Slack, e-posta, sunum</li>
-          <li>256 renk (ikonlar için yeterli)</li>
-          <li>Arka plan rengi seçilebilir</li>
+          <li>Plugin gerektirmez</li>
+          <li>Figma, Slack, sunum, e-posta</li>
+          <li>Özel arka plan rengi</li>
+          <li>Şeffaf mod desteklenir</li>
         </ul>
         <div class="gc-how">
           <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">İndir → görsel koyabileceğin her yere ekle</p>
+          <p class="gc-how-text">İndir → görsel koyabileceğin her yere ekle. Şeffaflık için "None" seç.</p>
         </div>
       </div>
 
@@ -1198,6 +1343,15 @@
         </label>
       </div>
 
+      <!-- Separate layers toggle (PNG only) -->
+      <div class="sep-layers-row visible" id="sep-layers-row">
+        <div class="sl-knob"></div>
+        <div class="sl-info">
+          <div class="sl-title">Ayrı layer export</div>
+          <div class="sl-desc">Her layer ayrı PNG sequence → AE'de bağımsız track olarak açılır</div>
+        </div>
+      </div>
+
       <!-- Background picker (for MP4 / GIF) -->
       <div class="bg-picker" id="bg-picker">
         <span class="bg-label">Background</span>
@@ -1255,6 +1409,10 @@
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span id="done-dl-label">Download ZIP</span>
       </button>
+      <button class="btn-edit-again" id="btn-edit-again">
+        <svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Edit layers
+      </button>
       <button class="btn-again" id="btn-reset">Convert another file</button>
     </div>
   </div>
@@ -1276,6 +1434,8 @@
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
+<!-- Global layer color picker — kept off-screen so the native dialog isn't clipped by any container -->
+<input type="color" id="layer-color-global" style="position:fixed;top:-200px;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none;">
 
 <script>
   // ─────────────────────────────────────────
@@ -1289,8 +1449,14 @@
   let fileQueue    = [];  // batch mode
   let batchMode    = false;
   let batchRowEls  = [];
-  let layerOverrides  = {};   // { [layerIndex]: { visible, opacity, color } }
-  let soloLayerIndex  = null;
+  let layerOverrides   = {};   // { [key]: { visible, opacity, color } }
+  let soloLayerIndex   = null;
+  let batchAnimPreviews = {};  // { itemIndex: lottieInstance }
+  let isExporting  = false;   // guard against concurrent/overlapping exports
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
   // ─────────────────────────────────────────
   // DOM refs
@@ -1339,17 +1505,18 @@
   document.addEventListener('dragover', e => e.preventDefault());
   document.addEventListener('drop',     e => e.preventDefault());
 
-  // Drop zone specific visuals
-  dropZone.addEventListener('dragenter', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-  dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-  dropZone.addEventListener('dragend',   () => dropZone.classList.remove('drag-over'));
+  // Drop zone specific visuals (counter avoids flicker when mouse enters child elements)
+  let dzEnterCount = 0;
+  dropZone.addEventListener('dragenter', e => { e.preventDefault(); dzEnterCount++; dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragover',  e => { e.preventDefault(); });
+  dropZone.addEventListener('dragleave', () => { dzEnterCount--; if (dzEnterCount <= 0) { dzEnterCount = 0; dropZone.classList.remove('drag-over'); } });
+  dropZone.addEventListener('dragend',   () => { dzEnterCount = 0; dropZone.classList.remove('drag-over'); });
   dropZone.addEventListener('drop', e => {
     e.preventDefault();
-    e.stopPropagation(); // prevent bubbling to body handler (would double-process files)
-    dropZone.classList.remove('drag-over');
+    e.stopPropagation();
+    dzEnterCount = 0; dropZone.classList.remove('drag-over');
     if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
-    else showToast('Please drop .json (Lottie) files.');
+    else showToast('Please drop .json files.');
   });
 
   // Also accept drop anywhere on page
@@ -1362,6 +1529,13 @@
   let videoBgColor = '#1a1a1a';
   const bgPicker = document.getElementById('bg-picker');
 
+  let separateLayersMode = false;
+  const sepLayersRow = document.getElementById('sep-layers-row');
+  sepLayersRow.addEventListener('click', () => {
+    separateLayersMode = !separateLayersMode;
+    sepLayersRow.classList.toggle('active', separateLayersMode);
+  });
+
   document.querySelectorAll('.fmt-card').forEach(card => {
     card.addEventListener('click', () => {
       document.querySelectorAll('.fmt-card').forEach(c => c.classList.remove('selected'));
@@ -1369,6 +1543,14 @@
       const fmt = card.querySelector('input').value;
       if (fmt === 'mp4' || fmt === 'gif') bgPicker.classList.add('visible');
       else bgPicker.classList.remove('visible');
+      // Show sep-layers toggle only for PNG
+      if (fmt === 'png') {
+        sepLayersRow.classList.add('visible');
+      } else {
+        sepLayersRow.classList.remove('visible');
+        separateLayersMode = false;
+        sepLayersRow.classList.remove('active');
+      }
     });
   });
 
@@ -1402,6 +1584,7 @@
     animData = animInfo = downloadBlob = null;
     fileQueue = []; batchMode = false; batchRowEls = [];
     layerOverrides = {}; soloLayerIndex = null;
+    Object.keys(batchAnimPreviews).forEach(k => destroyBatchPreview(parseInt(k)));
     document.getElementById('layers-section').style.display = 'none';
     if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
     isPaused = false;
@@ -1420,6 +1603,13 @@
   }
   btnClose.addEventListener('click', resetAll);
   btnReset.addEventListener('click', resetAll);
+
+  document.getElementById('btn-edit-again').addEventListener('click', () => {
+    doneCard.style.display  = 'none';
+    mainCard.style.display  = 'block';
+    refreshLayersPreview();
+    renderLayersPanel();
+  });
 
   // ─────────────────────────────────────────
   // Layer editor helpers
@@ -1466,9 +1656,9 @@
       result.push({ key: `root:${i}`, name: layer.nm || `Layer ${i+1}` });
     });
 
-    // If root had no meaningful shape layers at all, also list all asset layers
+    // If root has no meaningful shape layers, also surface all asset layers
     const hasShapeLayers = root.some(l => l.ty === 4 || l.ty === 3 || l.ty === 5);
-    if (!hasShapeLayers && result.length === 0) {
+    if (!hasShapeLayers) {
       Object.entries(assetLayerMap).forEach(([id, al]) => {
         al.forEach((l, j) => result.push({ key: `${id}:${j}`, name: l.nm || `Layer ${j+1}` }));
       });
@@ -1542,6 +1732,20 @@
     return copy;
   }
 
+  function getItemWorkingData(item) {
+    if (!item.layerOverrides || !Object.keys(item.layerOverrides).length) return item.animData;
+    const copy = JSON.parse(JSON.stringify(item.animData));
+    applyOverridesToData(copy, item.layerOverrides);
+    return copy;
+  }
+
+  function destroyBatchPreview(idx) {
+    if (batchAnimPreviews[idx]) {
+      try { batchAnimPreviews[idx].destroy(); } catch(e) {}
+      delete batchAnimPreviews[idx];
+    }
+  }
+
   function refreshLayersPreview() {
     const container = document.getElementById('preview-container');
     container.innerHTML = '';
@@ -1578,14 +1782,13 @@
 
       const row = document.createElement('div');
       row.className = `layer-row${isHidden ? ' layer-hidden' : ''}`;
+      const safeName = escapeHtml(name);
       row.innerHTML = `
         <button class="layer-eye-btn" title="${isHidden ? 'Show' : 'Hide'}">${isHidden ? EYE_OFF : EYE_ON}</button>
-        <span class="layer-row-name" title="${name}">${name}</span>
+        <span class="layer-row-name" title="${safeName}">${safeName}</span>
         <div class="layer-controls">
           <input type="number" class="layer-opacity-input" min="0" max="100" value="${opacity}" title="Opacity %">
-          <div class="layer-color-btn${color ? ' has-color' : ''}" style="${color ? `background:${color}` : ''}" title="Override fill color">
-            <input type="color" class="layer-color-input" value="${color || '#ffffff'}">
-          </div>
+          <button class="layer-color-btn${color ? ' has-color' : ''}" style="${color ? `background:${color}` : ''}" title="Override fill color" type="button"></button>
           <button class="layer-color-reset-btn${color ? '' : ' hidden'}" title="Reset color">✕</button>
           <button class="layer-solo-btn${isSolo ? ' active' : ''}" title="Solo">S</button>
         </div>`;
@@ -1593,13 +1796,51 @@
       row.querySelector('.layer-eye-btn').addEventListener('click', () =>
         setOv(key, 'visible', isHidden ? undefined : false)
       );
-      row.querySelector('.layer-opacity-input').addEventListener('change', e => {
-        const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
-        setOv(key, 'opacity', val === 100 ? undefined : val);
+      (function attachOpacityScrub(input) {
+        input.addEventListener('mousedown', e => {
+          if (e.button !== 0) return;
+          e.preventDefault();               // block text cursor during drag
+          const startX   = e.clientX;
+          const startVal = parseInt(input.value) || 100;
+          let dragged = false;
+
+          function onMove(ev) {
+            const dx = ev.clientX - startX;
+            if (!dragged && Math.abs(dx) < 2) return;
+            dragged = true;
+            const newVal = Math.max(0, Math.min(100, Math.round(startVal + dx)));
+            input.value = newVal;
+            setOv(key, 'opacity', newVal === 100 ? undefined : newVal);
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            if (!dragged) { input.focus(); input.select(); }  // click → type mode
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+        input.addEventListener('change', e => {
+          const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
+          setOv(key, 'opacity', val === 100 ? undefined : val);
+        });
+      })(row.querySelector('.layer-opacity-input'));
+      // Use the global off-screen color picker; position it near the button so the
+      // native OS picker opens in the right place, not at the top-left of the screen.
+      row.querySelector('.layer-color-btn').addEventListener('click', (evt) => {
+        if (window._colorPickerAbort) window._colorPickerAbort.abort();
+        window._colorPickerAbort = new AbortController();
+        const sig  = window._colorPickerAbort.signal;
+        const el   = document.getElementById('layer-color-global');
+        const rect = evt.currentTarget.getBoundingClientRect();
+        // Move to just below the button (fixed coords = viewport coords)
+        el.style.top  = Math.min(rect.bottom, window.innerHeight - 4) + 'px';
+        el.style.left = Math.min(rect.left,   window.innerWidth  - 4) + 'px';
+        el.value  = color || '#ffffff';
+        el.addEventListener('input',  e => setOv(key, 'color', e.target.value), { signal: sig });
+        el.addEventListener('change', e => setOv(key, 'color', e.target.value), { signal: sig });
+        el.click();
       });
-      row.querySelector('.layer-color-input').addEventListener('input', e =>
-        setOv(key, 'color', e.target.value)
-      );
       row.querySelector('.layer-color-reset-btn').addEventListener('click', e => {
         e.stopPropagation(); setOv(key, 'color', undefined);
       });
@@ -1646,7 +1887,9 @@
   }
 
   document.getElementById('btn-layers-show-all').addEventListener('click', () => {
-    layerOverrides = {}; soloLayerIndex = null;
+    // Only clear visibility/solo — preserve color and opacity edits
+    Object.values(layerOverrides).forEach(ov => { delete ov.visible; });
+    soloLayerIndex = null;
     renderLayersPanel(); refreshLayersPreview();
   });
   document.getElementById('btn-layers-hide-all').addEventListener('click', () => {
@@ -1662,6 +1905,7 @@
   // Batch helpers
   // ─────────────────────────────────────────
   function releaseOverlay() {
+    isExporting = false;
     if (!batchMode) { progOverlay.classList.remove('active'); btnExport.disabled = false; }
   }
   function onExportSuccess(blob, name, format, ext) {
@@ -1688,16 +1932,18 @@
   // Handle file(s)
   // ─────────────────────────────────────────
   function handleFiles(fileList) {
+    if (isExporting) { showToast('Export in progress — please wait.'); return; }
     const jsonFiles = Array.from(fileList).filter(f => f.name.endsWith('.json'));
-    if (jsonFiles.length === 0) { showToast('Please drop .json (Lottie) files.'); return; }
+    if (jsonFiles.length === 0) { showToast('Please drop .json files.'); return; }
     // Single file when nothing is loaded yet → single preview mode
     if (!batchMode && !animInfo && jsonFiles.length === 1) { handleFile(jsonFiles[0]); return; }
 
-    // If a single file was already loaded, carry it into the batch queue
+    // If a single file was already loaded, carry it into the batch queue (preserve layer edits)
     if (!batchMode && animInfo) {
       batchMode = true;
-      fileQueue.push({ animData, animInfo });
+      fileQueue.push({ animData, animInfo, layerOverrides: Object.assign({}, layerOverrides), soloLayerIndex });
       animData = null; animInfo = null;
+      layerOverrides = {}; soloLayerIndex = null;
       if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
     }
 
@@ -1709,13 +1955,14 @@
       reader.onload = ev => {
         try {
           const data = JSON.parse(ev.target.result);
+          if (!data.layers || data.op === undefined || data.ip === undefined) { showToast(`${file.name} geçerli bir animasyon dosyası değil.`); return; }
           const baseName = file.name.replace(/\.json$/i, '').replace(/[^\w\-. ]/g, '_').trim() || 'lottie';
           const w = data.w || 512, h = data.h || 512, fps = data.fr || 30;
-          const frames = Math.floor(data.op - data.ip);
-          fileQueue.push({ animData: data, animInfo: { w, h, fps, frames, duration: (frames/fps).toFixed(2), baseName } });
+          const frames = Math.max(1, Math.round(data.op - data.ip));
+          fileQueue.push({ animData: data, animInfo: { w, h, fps, frames, ip: data.ip || 0, duration: (frames/fps).toFixed(2), baseName }, layerOverrides: {}, soloLayerIndex: null });
         } catch(e) { /* skip invalid */ }
         if (++parsed === jsonFiles.length) {
-          if (!fileQueue.length) { showToast('No valid Lottie files found.'); batchMode = false; return; }
+          if (!fileQueue.length) { showToast('No valid animation files found.'); batchMode = false; return; }
           showBatchCard();
         }
       };
@@ -1727,14 +1974,21 @@
     batchMode = false;
     const reader = new FileReader();
     reader.onload = e => {
-      try { animData = JSON.parse(e.target.result); }
-      catch { showToast('Invalid JSON file — please drop a Lottie animation.'); return; }
+      let data;
+      try { data = JSON.parse(e.target.result); }
+      catch { showToast('Geçersiz JSON dosyası.'); return; }
+      if (!data.layers || data.op === undefined || data.ip === undefined) {
+        showToast(`${file.name} geçerli bir animasyon dosyası değil.`); return;
+      }
+      animData = data;
       loadPreview(file.name);
     };
     reader.readAsText(file);
   }
 
   function showBatchCard() {
+    // Cleanup any open batch previews
+    Object.keys(batchAnimPreviews).forEach(k => destroyBatchPreview(parseInt(k)));
     const list = document.getElementById('batch-list');
     list.innerHTML = ''; batchRowEls = [];
     fileQueue.forEach((item, i) => {
@@ -1757,9 +2011,15 @@
         const idx = parseInt(e.currentTarget.dataset.idx);
         const panel = document.getElementById(`blp-${idx}`);
         const isOpen = panel.style.display === 'block';
-        panel.style.display = isOpen ? 'none' : 'block';
-        e.currentTarget.classList.toggle('active', !isOpen);
-        if (!isOpen) renderBatchLayerPanel(idx);
+        if (isOpen) {
+          panel.style.display = 'none';
+          e.currentTarget.classList.remove('active');
+          destroyBatchPreview(idx);
+        } else {
+          panel.style.display = 'block';
+          e.currentTarget.classList.add('active');
+          renderBatchLayerPanel(idx);
+        }
       });
       row.querySelector('.batch-row-remove').addEventListener('click', e => {
         e.stopPropagation();
@@ -1798,6 +2058,9 @@
     const item   = fileQueue[itemIndex];
     const panel  = document.getElementById(`blp-${itemIndex}`);
     const layers = getEditableLayers(item.animData);
+
+    // Destroy old preview instance before rebuilding
+    destroyBatchPreview(itemIndex);
     panel.innerHTML = '';
 
     if (layers.length === 0) {
@@ -1805,8 +2068,34 @@
       return;
     }
 
+    // Two-column layout: preview left, controls right
+    const layout = document.createElement('div');
+    layout.className = 'blp-layout';
+
+    // ── Preview column ──
+    const previewWrap = document.createElement('div');
+    previewWrap.className = 'blp-preview-wrap';
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'blp-preview-container';
+    previewWrap.appendChild(previewContainer);
+    layout.appendChild(previewWrap);
+
+    // Load lottie preview with current overrides
+    const animInst = lottie.loadAnimation({
+      container: previewContainer,
+      renderer:  'svg',
+      loop:      true,
+      autoplay:  true,
+      animationData: getItemWorkingData(item),
+    });
+    batchAnimPreviews[itemIndex] = animInst;
+
+    // ── Controls column ──
+    const controls = document.createElement('div');
+    controls.className = 'blp-controls';
+
     const hdr = document.createElement('div');
-    hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:6px';
+    hdr.className = 'blp-controls-header';
     hdr.innerHTML = `<span style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)">${layers.length} layers</span><div style="display:flex;gap:4px"><button class="layers-action-btn blp-show">Show all</button><button class="layers-action-btn blp-hide">Hide all</button></div>`;
     hdr.querySelector('.blp-show').addEventListener('click', () => {
       item.layerOverrides = {}; item.soloLayerIndex = null;
@@ -1817,10 +2106,10 @@
       layers.forEach(({ key }) => { if (!item.layerOverrides[key]) item.layerOverrides[key] = {}; item.layerOverrides[key].visible = false; });
       renderBatchLayerPanel(itemIndex);
     });
-    panel.appendChild(hdr);
+    controls.appendChild(hdr);
 
     const layerList = document.createElement('div');
-    layerList.style.cssText = 'display:flex;flex-direction:column;gap:1px;max-height:140px;overflow-y:auto';
+    layerList.style.cssText = 'display:flex;flex-direction:column;gap:1px;max-height:120px;overflow-y:auto';
     layerList.appendChild(buildLayerRows(
       layers,
       key => item.layerOverrides[key],
@@ -1846,7 +2135,9 @@
         renderBatchLayerPanel(itemIndex);
       }
     ));
-    panel.appendChild(layerList);
+    controls.appendChild(layerList);
+    layout.appendChild(controls);
+    panel.appendChild(layout);
   }
 
   async function exportBatch() {
@@ -1912,11 +2203,10 @@
     if (doneCount > 0) {
       // For PNG batch: add a single batch_import.jsx that imports all animations at once
       if (fmt === 'png') {
-        const successNames = fileQueue
-          .filter((_, i) => batchRowEls[i].classList.contains('br-done'))
-          .map(q => q.animInfo.baseName);
-        const fps = fileQueue[0].animInfo.fps;
-        batchZip.file('batch_import.jsx', buildBatchAEScript(successNames, fps));
+        const successItems = fileQueue.filter((_, i) => batchRowEls[i].classList.contains('br-done'));
+        const successNames = successItems.map(q => q.animInfo.baseName);
+        const successFps   = successItems.map(q => q.animInfo.fps);
+        batchZip.file('batch_import.jsx', buildBatchAEScript(successNames, successFps));
       }
 
       await setProgress(99, fileQueue.length, 'Creating ZIP…');
@@ -1929,6 +2219,8 @@
       autoDownload(zipBlob, zipName);
     }
 
+    isExporting = false;
+    progEyebrow.textContent = 'Rendering frames';
     progOverlay.classList.remove('active');
     btnExport.disabled = false;
     showToast(`${doneCount} / ${fileQueue.length} files exported`);
@@ -1938,10 +2230,11 @@
     const w      = animData.w  || 512;
     const h      = animData.h  || 512;
     const fps    = animData.fr || 30;
-    const frames   = Math.floor(animData.op - animData.ip);
-    const dur      = (frames / fps).toFixed(2);
+    const ip     = animData.ip || 0;
+    const frames = Math.max(1, Math.round(animData.op - ip));
+    const dur    = (frames / fps).toFixed(2);
     const baseName = fileName.replace(/\.json$/i, '').replace(/[^\w\-. ]/g, '_').trim() || 'lottie';
-    animInfo       = { w, h, fps, frames, duration: dur, baseName };
+    animInfo       = { w, h, fps, frames, ip, duration: dur, baseName };
 
     // Reset layer overrides for the new file
     layerOverrides = {}; soloLayerIndex = null;
@@ -1981,12 +2274,28 @@
   // ─────────────────────────────────────────
   // Export router
   // ─────────────────────────────────────────
-  btnExport.addEventListener('click', () => {
-    if (batchMode) { exportBatch(); return; }
-    const fmt = document.querySelector('input[name="format"]:checked').value;
-    if (fmt === 'png')      exportPNG();
-    else if (fmt === 'mp4') exportVideo();
-    else                    exportGIF();
+  btnExport.addEventListener('click', async () => {
+    if (isExporting || btnExport.disabled) return;
+    isExporting = true;
+    btnExport.disabled = true;
+    try {
+      if (batchMode) { await exportBatch(); return; }
+      const fmt = document.querySelector('input[name="format"]:checked').value;
+      if (fmt === 'png') {
+        const hasLayers = getEditableLayers(animData).length > 1;
+        if (separateLayersMode && hasLayers) await exportPNGSeparateLayers();
+        else await exportPNG();
+      }
+      else if (fmt === 'mp4') await exportVideo();
+      else                    await exportGIF();
+    } catch(e) {
+      console.error('Export failed:', e);
+      showToast('Export failed — please try again.');
+      isExporting = false;
+      progOverlay.classList.remove('active');
+      btnExport.disabled = false;
+      progEyebrow.textContent = 'Rendering frames';
+    }
   });
 
   async function setProgress(pct, cur, status) {
@@ -2000,7 +2309,7 @@
   // Shared: spin up lottie canvas renderer
   // at the correct size, off-screen
   // ─────────────────────────────────────────
-  async function createRenderer(w, h) {
+  async function createRenderer(w, h, dataOverride) {
     const div = document.createElement('div');
     // Off-screen but full-size so lottie creates a correctly-sized canvas
     div.style.cssText = `position:fixed;top:-${h+10}px;left:-${w+10}px;width:${w}px;height:${h}px;overflow:hidden;`;
@@ -2011,7 +2320,7 @@
       renderer: 'canvas',
       loop: false,
       autoplay: false,
-      animationData: JSON.parse(JSON.stringify(getWorkingAnimData())),
+      animationData: JSON.parse(JSON.stringify(dataOverride || getWorkingAnimData())),
       rendererSettings: {
         clearCanvas: true,
         preserveAspectRatio: 'xMidYMid meet',
@@ -2019,8 +2328,12 @@
     });
 
     await new Promise((res, rej) => {
-      anim.addEventListener('DOMLoaded', res);
-      setTimeout(rej, 8000);
+      const t = setTimeout(() => {
+        anim.destroy();
+        if (document.body.contains(div)) document.body.removeChild(div);
+        rej(new Error('Lottie load timeout'));
+      }, 8000);
+      anim.addEventListener('DOMLoaded', () => { clearTimeout(t); res(); });
     });
 
     const canvas = div.querySelector('canvas');
@@ -2032,7 +2345,8 @@
   async function exportPNG() {
     progOverlay.classList.add('active');
     btnExport.disabled = true;
-    const { w, h, fps, frames, duration } = animInfo;
+    progEyebrow.textContent = 'Rendering frames';
+    const { w, h, fps, frames, ip = 0, duration } = animInfo;
     progTot.textContent = frames;
     await setProgress(0, 0, 'Creating render canvas…');
 
@@ -2043,7 +2357,7 @@
     const framesFolder = zip.folder('frames');
 
     for (let f = 0; f < frames; f++) {
-      anim.goToAndStop(f, true);
+      anim.goToAndStop(ip + f, true);
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
@@ -2069,7 +2383,89 @@
     });
 
     await setProgress(100, frames, 'Done!');
+    isExporting = false;
     onExportSuccess(content, `${animInfo.baseName}_ae_export.zip`, 'png', null);
+  }
+
+  // ─────────────────────────────────────────
+  // PNG export — separate layer sequences
+  // Each visible layer is solo-rendered into
+  // its own folder inside the ZIP.
+  // ─────────────────────────────────────────
+  async function exportPNGSeparateLayers() {
+    progOverlay.classList.add('active');
+    btnExport.disabled = true;
+    progEyebrow.textContent = 'Rendering layers';
+    const { w, h, fps, frames, ip = 0, duration, baseName } = animInfo;
+
+    const allLayers = getEditableLayers(animData);
+    // Only render layers that are currently visible
+    const visibleLayers = allLayers.filter(l => {
+      const ov = layerOverrides[l.key];
+      return !ov || ov.visible !== false;
+    });
+
+    if (visibleLayers.length === 0) {
+      showToast('Hiç görünür layer yok.');
+      releaseOverlay(); return;
+    }
+
+    const totalWork = visibleLayers.length * frames;
+    progTot.textContent = totalWork;
+    await setProgress(0, 0, `${visibleLayers.length} layer hazırlanıyor…`);
+
+    const zip = new JSZip();
+    const layersFolder = zip.folder('layers');
+    let done = 0;
+
+    for (let li = 0; li < visibleLayers.length; li++) {
+      const layerDef  = visibleLayers[li];
+      const safeName  = layerDef.name.replace(/[^\w\-. ]/g, '_').trim() || `layer_${li + 1}`;
+
+      await setProgress((done / totalWork) * 94, done,
+        `Layer ${li + 1}/${visibleLayers.length}: ${layerDef.name}`);
+
+      // Build animData with ONLY this layer visible:
+      // start from a fresh deep-copy with the user's overrides applied,
+      // then zero-opacity all other visible layers.
+      const copy = JSON.parse(JSON.stringify(animData));
+      applyOverridesToData(copy, layerOverrides);
+      visibleLayers.forEach(other => {
+        if (other.key === layerDef.key) return;
+        const lo = resolveLayer(copy, other.key);
+        if (lo) { lo.ks = lo.ks || {}; lo.ks.o = { a: 0, k: 0 }; }
+      });
+
+      const { anim, canvas, div } = await createRenderer(w, h, copy);
+      const folder = layersFolder.folder(safeName);
+
+      for (let f = 0; f < frames; f++) {
+        anim.goToAndStop(ip + f, true);
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        folder.file(`frame_${String(f).padStart(4, '0')}.png`, await blob.arrayBuffer());
+        done++;
+        if (f % 5 === 0) await setProgress((done / totalWork) * 94, done);
+      }
+
+      anim.destroy();
+      document.body.removeChild(div);
+    }
+
+    await setProgress(94, totalWork, 'AE scripti yazılıyor…');
+    const layerNames = visibleLayers.map((l, i) => l.name.replace(/[^\w\-. ]/g, '_').trim() || `layer_${i + 1}`);
+    zip.file('import_layers_ae.jsx', buildLayersAEScript(layerNames, animInfo));
+    zip.file('README.txt', buildLayersReadme(layerNames, animInfo));
+
+    await setProgress(97, totalWork, 'ZIP hazırlanıyor…');
+    const content = await zip.generateAsync({ type: 'blob' }, meta => {
+      setProgress(97 + meta.percent * 0.03, totalWork, 'Sıkıştırılıyor…');
+    });
+
+    await setProgress(100, totalWork, 'Bitti!');
+    progEyebrow.textContent = 'Rendering frames';
+    isExporting = false;
+    onExportSuccess(content, `${baseName}_layers.zip`, 'png-layers', visibleLayers.length);
   }
 
   // ─────────────────────────────────────────
@@ -2182,7 +2578,7 @@
     btnExport.disabled = true;
     progEyebrow.textContent = 'Encoding video';
 
-    const { w, h, fps, frames } = animInfo;
+    const { w, h, fps, frames, ip = 0 } = animInfo;
     const isTransparent = videoBgColor === 'transparent';
 
     // ── Branch A: Transparent → APNG ──────────────────────────
@@ -2203,7 +2599,7 @@
       const pngBlobs = [];
       let gf = 0;
       for (let f = 0; f < frames; f += apngStep) {
-        anim.goToAndStop(Math.min(f, frames - 1), true);
+        anim.goToAndStop(ip + Math.min(f, frames - 1), true);
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
         flatCtx.clearRect(0, 0, w, h);
         flatCtx.drawImage(lottieCanvas, 0, 0, w, h);
@@ -2223,6 +2619,7 @@
       const blob = await encodeAPNG(pngBlobs, apngDelay);
       await setProgress(100, gf, 'Done!');
       if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+      isExporting = false;
       onExportSuccess(blob, `${animInfo.baseName}.png`, 'apng', null);
       return;
     }
@@ -2282,15 +2679,14 @@
 
     for (let i = 0; i < totalFrames && !encError; i++) {
       const frameIdx = i % frames;
-      anim.goToAndStop(frameIdx, true);
+      anim.goToAndStop(ip + frameIdx, true);
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       flatCtx.fillStyle = videoBgColor;
       flatCtx.fillRect(0, 0, w, h);
       flatCtx.drawImage(lottieCanvas, 0, 0, w, h);
       const timestamp = Math.round(i * 1_000_000 / fps);
       const vf = new VideoFrame(flat, { timestamp });
-      encoder.encode(vf, { keyFrame: frameIdx === 0 });
-      vf.close();
+      try { encoder.encode(vf, { keyFrame: frameIdx === 0 }); } finally { vf.close(); }
       const pct = 3 + ((i + 1) / totalFrames) * 90;
       progCur.textContent = i + 1;
       progressBar.style.width = pct + '%';
@@ -2312,6 +2708,8 @@
 
     const blob = new Blob([target.buffer], { type: 'video/mp4' });
     await setProgress(100, totalFrames, 'Done!');
+    if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+    isExporting = false;
     onExportSuccess(blob, `${animInfo.baseName}.mp4`, 'video', 'MP4');
   }
 
@@ -2328,7 +2726,7 @@
     btnExport.disabled = true;
     progEyebrow.textContent = 'Encoding GIF';
 
-    const { w, h, fps, frames } = animInfo;
+    const { w, h, fps, frames, ip = 0 } = animInfo;
 
     // GIF max meaningful fps is ~30 (20ms minimum frame delay)
     const gifFps    = Math.min(fps, 30);
@@ -2344,9 +2742,10 @@
 
     // Fetch worker as blob URL to avoid CORS issues
     let workerScript = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js';
+    let workerBlobUrl = null;
     try {
       const r = await fetch(workerScript);
-      if (r.ok) workerScript = URL.createObjectURL(await r.blob());
+      if (r.ok) { workerBlobUrl = URL.createObjectURL(await r.blob()); workerScript = workerBlobUrl; }
     } catch(e) {}
 
     // For transparent GIF: color-key approach (GIF supports 1-bit alpha only)
@@ -2362,7 +2761,7 @@
 
     let gf = 0;
     for (let f = 0; f < frames; f += gifStep) {
-      anim.goToAndStop(Math.min(f, frames - 1), true);
+      anim.goToAndStop(ip + Math.min(f, frames - 1), true);
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       if (isTransparent) {
@@ -2394,13 +2793,20 @@
     document.body.removeChild(div);
     await setProgress(72, gf, 'Encoding GIF — please wait…');
 
-    await new Promise(resolve => {
+    await new Promise((resolve, reject) => {
+      const hangTimeout = setTimeout(() => {
+        showToast('GIF encoding timed out.'); releaseOverlay(); resolve();
+      }, 120_000);
       gif.on('progress', p => {
         progressBar.style.width = (72 + p * 28) + '%';
         progStatus.textContent  = `Encoding… ${Math.round(p * 100)}%`;
       });
+      gif.on('abort', () => { clearTimeout(hangTimeout); showToast('GIF encoding aborted.'); releaseOverlay(); resolve(); });
       gif.on('finished', blob => {
+        clearTimeout(hangTimeout);
+        if (workerBlobUrl) URL.revokeObjectURL(workerBlobUrl);
         if (!batchMode) progEyebrow.textContent = 'Rendering frames';
+        isExporting = false;
         onExportSuccess(blob, `${animInfo.baseName}.gif`, 'gif', null);
         resolve();
       });
@@ -2412,12 +2818,20 @@
   // Dynamic done card
   // ─────────────────────────────────────────
   function updateDoneCard(format, ext) {
-    const title  = document.getElementById('done-title');
-    const sub    = document.getElementById('done-sub');
-    const steps  = document.getElementById('done-steps');
-    const dlLbl  = document.getElementById('done-dl-label');
+    const title   = document.getElementById('done-title');
+    const sub     = document.getElementById('done-sub');
+    const steps   = document.getElementById('done-steps');
+    const dlLbl   = document.getElementById('done-dl-label');
+    const step3   = steps && steps.querySelectorAll('.step-t')[2];
 
-    if (format === 'png') {
+    if (format === 'png-layers') {
+      title.textContent = `${ext} layer ayrı ayrı hazır`;
+      sub.textContent   = 'Her layer kendi PNG sequence\'inde. ZIP\'i çıkart → import_layers_ae.jsx\'i AE\'de çalıştır → her layer bağımsız track olarak comp\'a gelir.';
+      steps.style.display = '';
+      if (step3) step3.innerHTML = '<code>import_layers_ae.jsx</code> dosyasını seç → tüm layer\'lar comp\'a eklenir';
+      dlLbl.textContent = 'Download ZIP';
+    } else if (format === 'png') {
+      if (step3) step3.innerHTML = '<code>import_to_ae.jsx</code> dosyasını seç → comp otomatik oluşur';
       title.textContent = 'Ready for After Effects';
       sub.textContent   = 'Your ZIP contains the full PNG sequence and an auto-import script. Extract and follow the steps below.';
       steps.style.display = '';
@@ -2442,10 +2856,95 @@
 
   // ─────────────────────────────────────────
   // ─────────────────────────────────────────
+  // ─────────────────────────────────────────
+  // AE Script — separate layers into one comp
+  // ─────────────────────────────────────────
+  function buildLayersAEScript(layerNames, { w, h, fps, frames, duration }) {
+    const list = layerNames.map(n => `"${n.replace(/"/g, '\\"')}"`).join(', ');
+    return `// ─────────────────────────────────────────────────
+// AfterPNG — Separate Layers Import Script
+// HOW TO USE:
+//   File → Scripts → Run Script File… → bu dosyayı seç
+// ─────────────────────────────────────────────────
+(function importLottieLayers() {
+  app.beginUndoGroup("Import Lottie Layers");
+  var scriptFile   = new File($.fileName);
+  var scriptFolder = scriptFile.parent;
+  var layersFolder = new Folder(scriptFolder.absoluteURI + "/layers");
+  if (!layersFolder.exists) {
+    alert("HATA: 'layers' klasörü bulunamadı.\\nBu .jsx dosyası ile 'layers' klasörü aynı yerde olmalı.");
+    return;
+  }
+  var layerNames = [${list}];
+  var comp = app.project.items.addComp(
+    "Lottie_Layers", ${w}, ${h}, 1, ${parseFloat(duration)}, ${fps}
+  );
+  var imported = 0;
+  // Add in reverse so layer order matches the original
+  for (var i = layerNames.length - 1; i >= 0; i--) {
+    var dir = new Folder(layersFolder.absoluteURI + "/" + layerNames[i]);
+    if (!dir.exists) continue;
+    var first = new File(dir.absoluteURI + "/frame_0000.png");
+    if (!first.exists) continue;
+    var io = new ImportOptions(first);
+    io.sequence = true;
+    io.forceAlphabetical = true;
+    var footage;
+    try { footage = app.project.importFile(io); } catch(e) { continue; }
+    footage.mainSource.conformFrameRate = ${fps};
+    footage.name = layerNames[i];
+    comp.layers.add(footage, ${parseFloat(duration)});
+    imported++;
+  }
+  comp.openInViewer();
+  app.endUndoGroup();
+  alert("Tamamdı!\\n" + imported + " layer '${w}x${h} @ ${fps}fps' comp'una eklendi.\\nHer layer AE'de bağımsız — boyutunu ve pozisyonunu özgürce ayarlayabilirsin.");
+})();
+`;
+  }
+
+  function buildLayersReadme(layerNames, { w, h, fps, frames, duration }) {
+    return `AFTERPNG — AYRILI LAYER EXPORT
+================================
+
+Animasyon Bilgisi
+-----------------
+Çözünürlük  : ${w} x ${h} px
+Kare Hızı   : ${fps} fps
+Kare Sayısı : ${frames}
+Süre        : ${duration} saniye
+Layer Sayısı: ${layerNames.length}
+
+Klasör Yapısı
+-------------
+/layers/
+${layerNames.map(n => `  /${n}/frame_0000.png … frame_${String(frames-1).padStart(4,'0')}.png`).join('\n')}
+import_layers_ae.jsx   After Effects import scripti
+README.txt             Bu dosya
+
+After Effects'e Import
+-----------------------
+1. ZIP'i çıkart
+2. After Effects'i aç
+3. File → Scripts → Run Script File…
+4. "import_layers_ae.jsx" dosyasını seç
+5. Bitti — her layer kendi track'inde comp'a eklenir
+
+After Effects'te neler yapabilirsin:
+• Her layer'ı bağımsız olarak ölçeklendir / döndür / taşı
+• Her layer'a ayrı efekt ve maske uygula
+• Layer'ları farklı zamanlarda başlat/bitir
+• Blending mode'larını değiştir
+
+Generated by AfterPNG — https://yzozsmsk.github.io/afterpng
+`;
+  }
+
   // Batch AE Script — imports all animations
   // ─────────────────────────────────────────
-  function buildBatchAEScript(names, fps) {
-    const list = names.map(n => `"${n.replace(/"/g, '\\"')}"`).join(', ');
+  function buildBatchAEScript(names, fpsArr) {
+    const list    = names.map(n => `"${n.replace(/"/g, '\\"')}"`).join(', ');
+    const fpsList = Array.isArray(fpsArr) ? fpsArr.join(', ') : fpsArr;
     return `// ─────────────────────────────────────────────────
 // Lottie Batch Import — After Effects Script
 // HOW TO USE:
@@ -2456,7 +2955,7 @@
   var scriptFile   = new File($.fileName);
   var scriptFolder = scriptFile.parent;
   var names        = [${list}];
-  var fps          = ${fps};
+  var fpsList      = [${fpsList}];
   var imported     = 0;
 
   for (var i = 0; i < names.length; i++) {
@@ -2468,7 +2967,7 @@
     io.sequence = true;
     io.forceAlphabetical = true;
     var footage = app.project.importFile(io);
-    footage.mainSource.conformFrameRate = fps;
+    footage.mainSource.conformFrameRate = fpsList[i] || 30;
     footage.name = names[i];
     imported++;
   }
@@ -2584,6 +3083,22 @@ Generated by Lottie → After Effects Converter
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
   });
+
+  // ─────────────────────────────────────────
+  // Theme toggle (light / dark)
+  // ─────────────────────────────────────────
+  (function initTheme() {
+    const htmlEl = document.documentElement;
+    const btn    = document.getElementById('theme-toggle');
+    // Apply saved preference; HTML already has data-theme="dark" as fallback
+    const saved  = localStorage.getItem('afterpng-theme');
+    if (saved) htmlEl.dataset.theme = saved;
+    btn.addEventListener('click', () => {
+      const next = htmlEl.dataset.theme === 'dark' ? 'light' : 'dark';
+      htmlEl.dataset.theme = next;
+      localStorage.setItem('afterpng-theme', next);
+    });
+  })();
 </script>
 </body>
 </html>
