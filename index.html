@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AfterPNG — Lottie to After Effects Converter</title>
+  <title>AfterPNG</title>
   <meta name="description" content="Convert Lottie JSON animations to PNG sequence, MP4, or GIF for After Effects. Free online tool — no install needed." />
   <meta name="keywords" content="lottie to after effects, lottie converter, lottie to PNG, lottie to MP4, lottie to GIF, AE import, animation converter" />
   <meta property="og:title" content="AfterPNG — Lottie to After Effects Converter" />
   <meta property="og:description" content="Convert Lottie JSON animations to PNG sequence, MP4, or GIF. Free online tool." />
   <meta property="og:url" content="https://yzozsmsk.github.io/afterpng" />
+  <link rel="icon" href="favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1423,6 +1424,69 @@
   // ─────────────────────────────────────────
   // Layer editor helpers
   // ─────────────────────────────────────────
+
+  // Returns flat list of { key, name } for every editable layer.
+  // key format: "root:i"  → animData.layers[i]
+  //             "assetId:j" → animData.assets[find(assetId)].layers[j]
+  //
+  // Strategy:
+  //   1. Collect all layers from root + all precomp assets
+  //   2. If root layers are ALL precomp refs (ty:0), hide those refs and
+  //      surface the actual shape/null layers from their assets instead.
+  //   3. Always fall back to showing root layers if nothing else found.
+  function getEditableLayers(data) {
+    if (!data) return [];
+    const root   = data.layers  || [];
+    const assets = data.assets  || [];
+
+    // Collect all asset layers keyed by asset id
+    const assetLayerMap = {};
+    assets.forEach(a => {
+      if (a.layers && a.layers.length) assetLayerMap[a.id] = a.layers;
+    });
+
+    // Check if root is nothing but precomp references
+    const rootOnlyPrecomps = root.length > 0 && root.every(l => l.ty === 0);
+
+    if (rootOnlyPrecomps) {
+      // Flatten one level: expand each precomp ref into its asset layers
+      const flat = [];
+      root.forEach(refLayer => {
+        const al = assetLayerMap[refLayer.refId];
+        if (al) {
+          al.forEach((l, j) => flat.push({ key: `${refLayer.refId}:${j}`, name: l.nm || `Layer ${j+1}` }));
+        }
+      });
+      if (flat.length) return flat;
+    }
+
+    // Mixed or direct: show root layers; for each precomp child also expand inline
+    const result = [];
+    root.forEach((layer, i) => {
+      result.push({ key: `root:${i}`, name: layer.nm || `Layer ${i+1}` });
+    });
+
+    // If root had no meaningful shape layers at all, also list all asset layers
+    const hasShapeLayers = root.some(l => l.ty === 4 || l.ty === 3 || l.ty === 5);
+    if (!hasShapeLayers && result.length === 0) {
+      Object.entries(assetLayerMap).forEach(([id, al]) => {
+        al.forEach((l, j) => result.push({ key: `${id}:${j}`, name: l.nm || `Layer ${j+1}` }));
+      });
+    }
+
+    return result;
+  }
+
+  // Resolve a key back to the actual layer object inside a (possibly deep-copied) data blob
+  function resolveLayer(data, key) {
+    const colon = key.lastIndexOf(':');
+    const scope = key.slice(0, colon);
+    const idx   = parseInt(key.slice(colon + 1));
+    if (scope === 'root') return (data.layers || [])[idx];
+    const asset = (data.assets || []).find(a => a.id === scope);
+    return asset && (asset.layers || [])[idx];
+  }
+
   function hexToLottieRgb(hex) {
     return [
       parseInt(hex.slice(1,3), 16) / 255,
@@ -1453,16 +1517,10 @@
     if (layer.shapes) walk(layer.shapes);
   }
 
-  function getWorkingAnimData() {
-    if (!animData) return null;
-    const hasChanges = Object.values(layerOverrides).some(ov =>
-      ov.visible === false || (ov.opacity !== undefined && ov.opacity !== 100) || ov.color
-    );
-    if (!hasChanges) return animData;
-    const copy = JSON.parse(JSON.stringify(animData));
-    (copy.layers || []).forEach((layer, i) => {
-      const ov = layerOverrides[i];
-      if (!ov) return;
+  function applyOverridesToData(copy, overrides) {
+    Object.entries(overrides).forEach(([key, ov]) => {
+      const layer = resolveLayer(copy, key);
+      if (!layer) return;
       if (ov.visible === false) {
         layer.ks = layer.ks || {};
         layer.ks.o = { a: 0, k: 0 };
@@ -1474,6 +1532,13 @@
       }
       if (ov.color) replaceLayerColors(layer, ov.color);
     });
+  }
+
+  function getWorkingAnimData() {
+    if (!animData) return null;
+    if (!Object.keys(layerOverrides).length) return animData;
+    const copy = JSON.parse(JSON.stringify(animData));
+    applyOverridesToData(copy, layerOverrides);
     return copy;
   }
 
@@ -1490,10 +1555,11 @@
     iconPlay.style.display  = 'none';
   }
 
-  function setLayerOverride(i, key, value) {
-    if (!layerOverrides[i]) layerOverrides[i] = {};
-    if (value === null || value === undefined) delete layerOverrides[i][key];
-    else layerOverrides[i][key] = value;
+  // key is a string like "root:0" or "comp_0:3"
+  function setLayerOverride(key, field, value) {
+    if (!layerOverrides[key]) layerOverrides[key] = {};
+    if (value === null || value === undefined) delete layerOverrides[key][field];
+    else layerOverrides[key][field] = value;
     renderLayersPanel();
     refreshLayersPreview();
   }
@@ -1501,24 +1567,14 @@
   const EYE_ON  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
   const EYE_OFF = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
 
-  function renderLayersPanel() {
-    const layers  = (animData && animData.layers) || [];
-    const section = document.getElementById('layers-section');
-    const list    = document.getElementById('layers-list');
-    const badge   = document.getElementById('layers-badge');
-
-    if (layers.length === 0 || batchMode) { section.style.display = 'none'; return; }
-
-    badge.textContent = layers.length;
-    list.innerHTML = '';
-
-    layers.forEach((layer, i) => {
-      const name     = layer.nm || `Layer ${i + 1}`;
-      const ov       = layerOverrides[i] || {};
+  function buildLayerRows(layers, getOv, setOv, getSolo, setSolo, onSoloToggle) {
+    const frag = document.createDocumentFragment();
+    layers.forEach(({ key, name }) => {
+      const ov       = getOv(key) || {};
       const isHidden = ov.visible === false;
       const opacity  = ov.opacity !== undefined ? ov.opacity : 100;
-      const color    = ov.color  || null;
-      const isSolo   = soloLayerIndex === i;
+      const color    = ov.color || null;
+      const isSolo   = getSolo() === key;
 
       const row = document.createElement('div');
       row.className = `layer-row${isHidden ? ' layer-hidden' : ''}`;
@@ -1531,57 +1587,75 @@
             <input type="color" class="layer-color-input" value="${color || '#ffffff'}">
           </div>
           <button class="layer-color-reset-btn${color ? '' : ' hidden'}" title="Reset color">✕</button>
-          <button class="layer-solo-btn${isSolo ? ' active' : ''}" title="Solo this layer">S</button>
+          <button class="layer-solo-btn${isSolo ? ' active' : ''}" title="Solo">S</button>
         </div>`;
 
       row.querySelector('.layer-eye-btn').addEventListener('click', () =>
-        setLayerOverride(i, 'visible', isHidden ? undefined : false)
+        setOv(key, 'visible', isHidden ? undefined : false)
       );
       row.querySelector('.layer-opacity-input').addEventListener('change', e => {
         const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
-        setLayerOverride(i, 'opacity', val === 100 ? undefined : val);
+        setOv(key, 'opacity', val === 100 ? undefined : val);
       });
       row.querySelector('.layer-color-input').addEventListener('input', e =>
-        setLayerOverride(i, 'color', e.target.value)
+        setOv(key, 'color', e.target.value)
       );
       row.querySelector('.layer-color-reset-btn').addEventListener('click', e => {
-        e.stopPropagation();
-        setLayerOverride(i, 'color', undefined);
+        e.stopPropagation(); setOv(key, 'color', undefined);
       });
-      row.querySelector('.layer-solo-btn').addEventListener('click', () => {
-        if (soloLayerIndex === i) {
+      row.querySelector('.layer-solo-btn').addEventListener('click', () =>
+        onSoloToggle(key, layers)
+      );
+      frag.appendChild(row);
+    });
+    return frag;
+  }
+
+  function renderLayersPanel() {
+    const layers  = getEditableLayers(animData);
+    const section = document.getElementById('layers-section');
+    const list    = document.getElementById('layers-list');
+    const badge   = document.getElementById('layers-badge');
+
+    if (layers.length === 0 || batchMode) { section.style.display = 'none'; return; }
+
+    badge.textContent = layers.length;
+    list.innerHTML = '';
+    list.appendChild(buildLayerRows(
+      layers,
+      key => layerOverrides[key],
+      (key, field, value) => setLayerOverride(key, field, value),
+      () => soloLayerIndex,
+      v  => { soloLayerIndex = v; },
+      (key, allLayers) => {
+        if (soloLayerIndex === key) {
           soloLayerIndex = null;
-          layers.forEach((_, j) => { if (layerOverrides[j]) delete layerOverrides[j].visible; });
+          allLayers.forEach(l => { if (layerOverrides[l.key]) delete layerOverrides[l.key].visible; });
         } else {
-          soloLayerIndex = i;
-          layers.forEach((_, j) => {
-            if (!layerOverrides[j]) layerOverrides[j] = {};
-            layerOverrides[j].visible = (j === i) ? undefined : false;
+          soloLayerIndex = key;
+          allLayers.forEach(l => {
+            if (!layerOverrides[l.key]) layerOverrides[l.key] = {};
+            layerOverrides[l.key].visible = (l.key === key) ? undefined : false;
           });
         }
         renderLayersPanel();
         refreshLayersPreview();
-      });
-
-      list.appendChild(row);
-    });
-
-    section.style.display = 'block';   // ← 'block' not '' (class has display:none)
+      }
+    ));
+    section.style.display = 'block';
   }
 
   document.getElementById('btn-layers-show-all').addEventListener('click', () => {
     layerOverrides = {}; soloLayerIndex = null;
-    renderLayersPanel();
-    refreshLayersPreview();
+    renderLayersPanel(); refreshLayersPreview();
   });
   document.getElementById('btn-layers-hide-all').addEventListener('click', () => {
     soloLayerIndex = null;
-    ((animData && animData.layers) || []).forEach((_, i) => {
-      if (!layerOverrides[i]) layerOverrides[i] = {};
-      layerOverrides[i].visible = false;
+    getEditableLayers(animData).forEach(({ key }) => {
+      if (!layerOverrides[key]) layerOverrides[key] = {};
+      layerOverrides[key].visible = false;
     });
-    renderLayersPanel();
-    refreshLayersPreview();
+    renderLayersPanel(); refreshLayersPreview();
   });
 
   // ─────────────────────────────────────────
@@ -1723,7 +1797,7 @@
   function renderBatchLayerPanel(itemIndex) {
     const item   = fileQueue[itemIndex];
     const panel  = document.getElementById(`blp-${itemIndex}`);
-    const layers = (item.animData && item.animData.layers) || [];
+    const layers = getEditableLayers(item.animData);
     panel.innerHTML = '';
 
     if (layers.length === 0) {
@@ -1731,76 +1805,47 @@
       return;
     }
 
-    // Header
     const hdr = document.createElement('div');
     hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:6px';
-    hdr.innerHTML = `<span style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)">${layers.length} layers</span><div style="display:flex;gap:4px"><button class="layers-action-btn blp-show" data-idx="${itemIndex}">Show all</button><button class="layers-action-btn blp-hide" data-idx="${itemIndex}">Hide all</button></div>`;
+    hdr.innerHTML = `<span style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)">${layers.length} layers</span><div style="display:flex;gap:4px"><button class="layers-action-btn blp-show">Show all</button><button class="layers-action-btn blp-hide">Hide all</button></div>`;
     hdr.querySelector('.blp-show').addEventListener('click', () => {
       item.layerOverrides = {}; item.soloLayerIndex = null;
       renderBatchLayerPanel(itemIndex);
     });
     hdr.querySelector('.blp-hide').addEventListener('click', () => {
       item.soloLayerIndex = null;
-      layers.forEach((_, j) => { if (!item.layerOverrides[j]) item.layerOverrides[j] = {}; item.layerOverrides[j].visible = false; });
+      layers.forEach(({ key }) => { if (!item.layerOverrides[key]) item.layerOverrides[key] = {}; item.layerOverrides[key].visible = false; });
       renderBatchLayerPanel(itemIndex);
     });
     panel.appendChild(hdr);
 
     const layerList = document.createElement('div');
     layerList.style.cssText = 'display:flex;flex-direction:column;gap:1px;max-height:140px;overflow-y:auto';
-
-    function setBLO(j, key, value) {
-      if (!item.layerOverrides[j]) item.layerOverrides[j] = {};
-      if (value === null || value === undefined) delete item.layerOverrides[j][key];
-      else item.layerOverrides[j][key] = value;
-      renderBatchLayerPanel(itemIndex);
-    }
-
-    layers.forEach((layer, j) => {
-      const name     = layer.nm || `Layer ${j + 1}`;
-      const ov       = item.layerOverrides[j] || {};
-      const isHidden = ov.visible === false;
-      const opacity  = ov.opacity !== undefined ? ov.opacity : 100;
-      const color    = ov.color || null;
-      const isSolo   = item.soloLayerIndex === j;
-
-      const row = document.createElement('div');
-      row.className = `layer-row${isHidden ? ' layer-hidden' : ''}`;
-      row.innerHTML = `
-        <button class="layer-eye-btn">${isHidden ? EYE_OFF : EYE_ON}</button>
-        <span class="layer-row-name" title="${name}">${name}</span>
-        <div class="layer-controls">
-          <input type="number" class="layer-opacity-input" min="0" max="100" value="${opacity}" title="Opacity %">
-          <div class="layer-color-btn${color ? ' has-color' : ''}" style="${color ? `background:${color}` : ''}">
-            <input type="color" class="layer-color-input" value="${color || '#ffffff'}">
-          </div>
-          <button class="layer-color-reset-btn${color ? '' : ' hidden'}">✕</button>
-          <button class="layer-solo-btn${isSolo ? ' active' : ''}" title="Solo">S</button>
-        </div>`;
-
-      row.querySelector('.layer-eye-btn').addEventListener('click', () => setBLO(j, 'visible', isHidden ? undefined : false));
-      row.querySelector('.layer-opacity-input').addEventListener('change', e => {
-        const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
-        setBLO(j, 'opacity', val === 100 ? undefined : val);
-      });
-      row.querySelector('.layer-color-input').addEventListener('input', e => setBLO(j, 'color', e.target.value));
-      row.querySelector('.layer-color-reset-btn').addEventListener('click', e => { e.stopPropagation(); setBLO(j, 'color', undefined); });
-      row.querySelector('.layer-solo-btn').addEventListener('click', () => {
-        if (item.soloLayerIndex === j) {
+    layerList.appendChild(buildLayerRows(
+      layers,
+      key => item.layerOverrides[key],
+      (key, field, value) => {
+        if (!item.layerOverrides[key]) item.layerOverrides[key] = {};
+        if (value === null || value === undefined) delete item.layerOverrides[key][field];
+        else item.layerOverrides[key][field] = value;
+        renderBatchLayerPanel(itemIndex);
+      },
+      () => item.soloLayerIndex,
+      v  => { item.soloLayerIndex = v; },
+      (key, allLayers) => {
+        if (item.soloLayerIndex === key) {
           item.soloLayerIndex = null;
-          layers.forEach((_, k) => { if (item.layerOverrides[k]) delete item.layerOverrides[k].visible; });
+          allLayers.forEach(l => { if (item.layerOverrides[l.key]) delete item.layerOverrides[l.key].visible; });
         } else {
-          item.soloLayerIndex = j;
-          layers.forEach((_, k) => {
-            if (!item.layerOverrides[k]) item.layerOverrides[k] = {};
-            item.layerOverrides[k].visible = (k === j) ? undefined : false;
+          item.soloLayerIndex = key;
+          allLayers.forEach(l => {
+            if (!item.layerOverrides[l.key]) item.layerOverrides[l.key] = {};
+            item.layerOverrides[l.key].visible = (l.key === key) ? undefined : false;
           });
         }
         renderBatchLayerPanel(itemIndex);
-      });
-
-      layerList.appendChild(row);
-    });
+      }
+    ));
     panel.appendChild(layerList);
   }
 
