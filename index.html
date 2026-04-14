@@ -856,7 +856,7 @@
       <span class="logo-text">Lottie → AE</span>
     </div>
     <h1 class="h-title">Export animations<br>to <em>After Effects</em></h1>
-    <p class="h-sub">Drop a Lottie JSON — get a PNG sequence<br>and an AE import script, ready to run.</p>
+    <p class="h-sub">Drop one or more Lottie JSON files — export as<br>PNG, MP4, APNG or GIF. Batch supported.</p>
   </header>
 
   <!-- Drop Zone -->
@@ -892,7 +892,7 @@
         </ul>
         <div class="gc-how">
           <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">ZIP'i çıkart → AE'de <code>import_to_ae.jsx</code> çalıştır → comp otomatik oluşur</p>
+          <p class="gc-how-text">ZIP'i çıkart → AE'de <code>File → Scripts → Run Script File…</code> → <code>import_to_ae.jsx</code> seç → comp otomatik oluşur. Toplu export'ta <code>batch_import.jsx</code> tüm animasyonları tek seferde ekler.</p>
         </div>
       </div>
 
@@ -1024,15 +1024,15 @@
       <div class="section-label" style="margin-bottom:13px">How to import</div>
       <div class="step-row">
         <div class="step-n">1</div>
-        <div class="step-t">Extract the downloaded ZIP file to any folder</div>
+        <div class="step-t">ZIP'i çıkart → istediğin bir klasöre</div>
       </div>
       <div class="step-row">
         <div class="step-n">2</div>
-        <div class="step-t">In After Effects → <code>File</code> → <code>Scripts</code> → <code>Run Script File…</code></div>
+        <div class="step-t">After Effects → <code>File</code> → <code>Scripts</code> → <code>Run Script File…</code></div>
       </div>
       <div class="step-row">
         <div class="step-n">3</div>
-        <div class="step-t">Select <code>import_to_ae.jsx</code> — the comp is created automatically</div>
+        <div class="step-t"><code>import_to_ae.jsx</code> dosyasını seç → comp otomatik oluşur</div>
       </div>
     </div>
     <div class="done-actions">
@@ -1234,8 +1234,16 @@
   function handleFiles(fileList) {
     const jsonFiles = Array.from(fileList).filter(f => f.name.endsWith('.json'));
     if (jsonFiles.length === 0) { showToast('Please drop .json (Lottie) files.'); return; }
-    // Single file when NOT already in batch mode → single preview mode
-    if (!batchMode && jsonFiles.length === 1) { handleFile(jsonFiles[0]); return; }
+    // Single file when nothing is loaded yet → single preview mode
+    if (!batchMode && !animInfo && jsonFiles.length === 1) { handleFile(jsonFiles[0]); return; }
+
+    // If a single file was already loaded, carry it into the batch queue
+    if (!batchMode && animInfo) {
+      batchMode = true;
+      fileQueue.push({ animData, animInfo });
+      animData = null; animInfo = null;
+      if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
+    }
 
     // Batch mode: append new files to existing queue (don't reset)
     batchMode = true;
