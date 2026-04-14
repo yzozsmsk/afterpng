@@ -1006,14 +1006,52 @@
     }
     .layer-row {
       display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 4px;
+      flex-direction: column;
+      gap: 2px;
+      padding: 5px 4px;
       border-radius: 5px;
       transition: background .1s;
       user-select: none;
     }
     .layer-row:hover { background: var(--surface2); }
+    .lr-top {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .lr-props {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding-left: 22px;
+      flex-wrap: wrap;
+    }
+    .lr-lbl {
+      font-size: 9px;
+      color: var(--text-3);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      margin-left: 3px;
+    }
+    .lr-lbl:first-child { margin-left: 0; }
+    .lp-num {
+      width: 34px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 10.5px;
+      text-align: center;
+      padding: 2px 1px;
+      font-family: inherit;
+      -moz-appearance: textfield;
+      cursor: ew-resize;
+    }
+    .lp-num::-webkit-inner-spin-button,
+    .lp-num::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .lp-num:focus { cursor: text; outline: none; border-color: var(--accent); }
+    .lp-num.lp-default { color: var(--text-3); }
     .layer-eye-btn {
       width: 20px; height: 20px;
       flex-shrink: 0;
@@ -1044,28 +1082,9 @@
       text-decoration: line-through;
       opacity: .5;
     }
-    .layer-controls {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-    .layer-opacity-input {
-      width: 36px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text);
-      font-size: 10.5px;
-      text-align: center;
-      padding: 2px 2px;
-      font-family: inherit;
-      -moz-appearance: textfield;
-      cursor: ew-resize;
-    }
-    .layer-opacity-input::-webkit-inner-spin-button,
-    .layer-opacity-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-    .layer-opacity-input:focus { cursor: text; outline: none; border-color: var(--accent); }
+    .lp-num.lp-rot,
+    .lp-num.lp-posx,
+    .lp-num.lp-posy { width: 40px; }
     .layer-color-btn {
       width: 20px; height: 20px;
       border-radius: 4px;
@@ -1119,6 +1138,83 @@
     }
     .layer-solo-btn:hover { color: var(--text); border-color: var(--border-hi); }
     .layer-solo-btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-glow); }
+
+    /* ── SVG Section ── */
+    .svg-section {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 12px 18px 10px;
+    }
+    .svg-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .svg-section-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+    .svg-preview-box {
+      width: 100%;
+      aspect-ratio: auto;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      margin-bottom: 8px;
+    }
+    .svg-preview-box svg {
+      max-width: 100%;
+      max-height: 200px;
+      display: block;
+    }
+    .svg-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .svg-slider {
+      flex: 1;
+      height: 4px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .svg-frame-label {
+      font-size: 11px;
+      color: var(--text-2);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .svg-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .svg-actions .svg-btn {
+      flex: 1;
+      height: 34px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text-2);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .svg-actions .svg-btn:hover { border-color: var(--border-hi); color: var(--text); }
 
     /* ── Separate Layers Toggle ── */
     .sep-layers-row {
@@ -1217,7 +1313,7 @@
       <div class="dz-dot"></div>
       Accepts .json files only · or click to browse
     </div>
-    <input type="file" id="file-input" accept=".json" multiple />
+    <input type="file" id="file-input" accept=".json" multiple aria-label="Select JSON animation files" />
   </div>
 
   <!-- Format Guide -->
@@ -1313,11 +1409,32 @@
           <span class="layers-badge" id="layers-badge">0</span>
         </span>
         <div class="layers-actions">
-          <button class="layers-action-btn" id="btn-layers-show-all">Show all</button>
-          <button class="layers-action-btn" id="btn-layers-hide-all">Hide all</button>
+          <button class="layers-action-btn" id="btn-layers-reset-all" title="Reset all layer overrides to defaults">Reset</button>
+          <button class="layers-action-btn" id="btn-layers-show-all" title="Make all layers visible">Show all</button>
+          <button class="layers-action-btn" id="btn-layers-hide-all" title="Hide all layers">Hide all</button>
         </div>
       </div>
       <div class="layers-list" id="layers-list"></div>
+    </div>
+
+    <!-- SVG Section -->
+    <div class="svg-section" id="svg-section">
+      <div class="svg-section-header">
+        <span class="svg-section-title">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 12l3 3 7-7"/></svg>
+          Vekt&ouml;rel SVG
+          <span class="layers-badge" id="svg-frame-badge">0</span>
+        </span>
+      </div>
+      <div id="svg-preview-box" class="svg-preview-box"></div>
+      <div class="svg-controls">
+        <input type="range" id="svg-frame-slider" min="0" value="0" step="1" class="svg-slider">
+        <span class="svg-frame-label" id="svg-frame-label">0 / 0</span>
+      </div>
+      <div class="svg-actions">
+        <button class="svg-btn" id="btn-svg-download">SVG &#x130;ndir</button>
+        <button class="svg-btn" id="btn-svg-copy">Kodu Kopyala</button>
+      </div>
     </div>
 
     <div class="export-area">
@@ -1347,8 +1464,8 @@
       <div class="sep-layers-row visible" id="sep-layers-row">
         <div class="sl-knob"></div>
         <div class="sl-info">
-          <div class="sl-title">Ayrı layer export</div>
-          <div class="sl-desc">Her layer ayrı PNG sequence → AE'de bağımsız track olarak açılır</div>
+          <div class="sl-title">Vektörel AE export</div>
+          <div class="sl-desc">Her layer native AE shape layer olarak oluşturulur → sonsuza kadar ölçeklenebilir vektör</div>
         </div>
       </div>
 
@@ -1449,7 +1566,7 @@
   let fileQueue    = [];  // batch mode
   let batchMode    = false;
   let batchRowEls  = [];
-  let layerOverrides   = {};   // { [key]: { visible, opacity, color } }
+  let layerOverrides   = {};   // { [key]: { visible, opacity, color, strokeMult, scale, rotation, posX, posY } }
   let soloLayerIndex   = null;
   let batchAnimPreviews = {};  // { itemIndex: lottieInstance }
   let isExporting  = false;   // guard against concurrent/overlapping exports
@@ -1586,6 +1703,8 @@
     layerOverrides = {}; soloLayerIndex = null;
     Object.keys(batchAnimPreviews).forEach(k => destroyBatchPreview(parseInt(k)));
     document.getElementById('layers-section').style.display = 'none';
+    document.getElementById('svg-section').style.display = 'none';
+    destroySVGRenderer();
     if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
     isPaused = false;
     iconPause.style.display = '';
@@ -1609,6 +1728,7 @@
     mainCard.style.display  = 'block';
     refreshLayersPreview();
     renderLayersPanel();
+    renderSVGSection();
   });
 
   // ─────────────────────────────────────────
@@ -1685,6 +1805,28 @@
     ];
   }
 
+  function scaleLayerStroke(layer, mult) {
+    function walk(items) {
+      if (!Array.isArray(items)) return;
+      items.forEach(item => {
+        if (item.ty === 'st' && item.w) {
+          if (item.w.a === 0) {
+            item.w.k = Math.max(0, item.w.k * mult);
+          } else if (Array.isArray(item.w.k)) {
+            item.w.k.forEach(kf => {
+              if (typeof kf.s === 'number') kf.s = Math.max(0, kf.s * mult);
+              else if (Array.isArray(kf.s)) kf.s = kf.s.map(v => Math.max(0, v * mult));
+              if (typeof kf.e === 'number') kf.e = Math.max(0, kf.e * mult);
+              else if (Array.isArray(kf.e)) kf.e = kf.e.map(v => Math.max(0, v * mult));
+            });
+          }
+        }
+        if (item.it) walk(item.it);
+      });
+    }
+    if (layer.shapes) walk(layer.shapes);
+  }
+
   function replaceLayerColors(layer, hex) {
     const [r, g, b] = hexToLottieRgb(hex);
     function walk(items) {
@@ -1707,6 +1849,70 @@
     if (layer.shapes) walk(layer.shapes);
   }
 
+  function applyScaleOverride(layer, scalePct) {
+    const mult = scalePct / 100;
+    if (!layer.ks || !layer.ks.s) return;
+    const s = layer.ks.s;
+    if (s.a === 0) {
+      if (Array.isArray(s.k)) s.k = s.k.map(v => v * mult);
+    } else if (Array.isArray(s.k)) {
+      s.k.forEach(kf => {
+        if (Array.isArray(kf.s)) kf.s = kf.s.map(v => v * mult);
+        if (Array.isArray(kf.e)) kf.e = kf.e.map(v => v * mult);
+      });
+    }
+  }
+
+  function applyRotationOverride(layer, degrees) {
+    if (!layer.ks) layer.ks = {};
+    const r = layer.ks.r;
+    if (!r) { layer.ks.r = { a: 0, k: degrees }; return; }
+    if (r.a === 0) {
+      r.k = (typeof r.k === 'number' ? r.k : 0) + degrees;
+    } else if (Array.isArray(r.k)) {
+      r.k.forEach(kf => {
+        if (Array.isArray(kf.s)) kf.s = kf.s.map(v => v + degrees);
+        else if (typeof kf.s === 'number') kf.s += degrees;
+        if (Array.isArray(kf.e)) kf.e = kf.e.map(v => v + degrees);
+        else if (typeof kf.e === 'number') kf.e += degrees;
+      });
+    }
+  }
+
+  function applyPositionOverride(layer, dx, dy) {
+    if (!layer.ks) layer.ks = {};
+    const p = layer.ks.p;
+    if (!p) { layer.ks.p = { a: 0, k: [dx, dy, 0] }; return; }
+    if (p.s) {
+      // Split position mode
+      if (p.x) {
+        if (p.x.a === 0) p.x.k = (p.x.k || 0) + dx;
+        else if (Array.isArray(p.x.k)) p.x.k.forEach(kf => {
+          if (Array.isArray(kf.s)) kf.s = kf.s.map(v => v + dx);
+          else if (typeof kf.s === 'number') kf.s += dx;
+          if (Array.isArray(kf.e)) kf.e = kf.e.map(v => v + dx);
+          else if (typeof kf.e === 'number') kf.e += dx;
+        });
+      }
+      if (p.y) {
+        if (p.y.a === 0) p.y.k = (p.y.k || 0) + dy;
+        else if (Array.isArray(p.y.k)) p.y.k.forEach(kf => {
+          if (Array.isArray(kf.s)) kf.s = kf.s.map(v => v + dy);
+          else if (typeof kf.s === 'number') kf.s += dy;
+          if (Array.isArray(kf.e)) kf.e = kf.e.map(v => v + dy);
+          else if (typeof kf.e === 'number') kf.e += dy;
+        });
+      }
+    } else if (p.a === 0) {
+      if (Array.isArray(p.k)) { p.k[0] = (p.k[0] || 0) + dx; p.k[1] = (p.k[1] || 0) + dy; }
+    } else if (Array.isArray(p.k)) {
+      p.k.forEach(kf => {
+        if (Array.isArray(kf.s)) { kf.s[0] = (kf.s[0] || 0) + dx; kf.s[1] = (kf.s[1] || 0) + dy; }
+        if (Array.isArray(kf.e)) { kf.e[0] = (kf.e[0] || 0) + dx; kf.e[1] = (kf.e[1] || 0) + dy; }
+      });
+    }
+  }
+
   function applyOverridesToData(copy, overrides) {
     Object.entries(overrides).forEach(([key, ov]) => {
       const layer = resolveLayer(copy, key);
@@ -1721,6 +1927,11 @@
         layer.ks.o = { a: 0, k: ov.opacity };
       }
       if (ov.color) replaceLayerColors(layer, ov.color);
+      if (ov.strokeMult !== undefined && ov.strokeMult !== 1) scaleLayerStroke(layer, ov.strokeMult);
+      if (ov.scale    !== undefined && ov.scale    !== 100) applyScaleOverride(layer, ov.scale);
+      if (ov.rotation !== undefined && ov.rotation !== 0)   applyRotationOverride(layer, ov.rotation);
+      if ((ov.posX !== undefined && ov.posX !== 0) || (ov.posY !== undefined && ov.posY !== 0))
+        applyPositionOverride(layer, ov.posX || 0, ov.posY || 0);
     });
   }
 
@@ -1746,17 +1957,24 @@
     }
   }
 
+  let _refreshTimer = null;
   function refreshLayersPreview() {
-    const container = document.getElementById('preview-container');
-    container.innerHTML = '';
-    if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
-    previewAnim = lottie.loadAnimation({
-      container, renderer: 'svg', loop: true, autoplay: true,
-      animationData: getWorkingAnimData(),
+    if (_refreshTimer) cancelAnimationFrame(_refreshTimer);
+    _refreshTimer = requestAnimationFrame(() => {
+      _refreshTimer = null;
+      const container = document.getElementById('preview-container');
+      container.innerHTML = '';
+      if (previewAnim) { previewAnim.destroy(); previewAnim = null; }
+      previewAnim = lottie.loadAnimation({
+        container, renderer: 'svg', loop: true, autoplay: true,
+        animationData: getWorkingAnimData(),
+      });
+      isPaused = false;
+      iconPause.style.display = '';
+      iconPlay.style.display  = 'none';
+      // Re-init SVG renderer with updated overrides
+      if (animData && !batchMode && svgRendererDiv) initSVGRenderer();
     });
-    isPaused = false;
-    iconPause.style.display = '';
-    iconPlay.style.display  = 'none';
   }
 
   // key is a string like "root:0" or "comp_0:3"
@@ -1774,57 +1992,99 @@
   function buildLayerRows(layers, getOv, setOv, getSolo, setSolo, onSoloToggle) {
     const frag = document.createDocumentFragment();
     layers.forEach(({ key, name }) => {
-      const ov       = getOv(key) || {};
-      const isHidden = ov.visible === false;
-      const opacity  = ov.opacity !== undefined ? ov.opacity : 100;
-      const color    = ov.color || null;
-      const isSolo   = getSolo() === key;
+      const ov         = getOv(key) || {};
+      const isHidden   = ov.visible === false;
+      const opacity    = ov.opacity    !== undefined ? ov.opacity    : 100;
+      const strokeMult = ov.strokeMult !== undefined ? ov.strokeMult : 1;
+      const scale      = ov.scale      !== undefined ? ov.scale      : 100;
+      const rotation   = ov.rotation   !== undefined ? ov.rotation   : 0;
+      const posX       = ov.posX       !== undefined ? ov.posX       : 0;
+      const posY       = ov.posY       !== undefined ? ov.posY       : 0;
+      const color      = ov.color || null;
+      const isSolo     = getSolo() === key;
 
       const row = document.createElement('div');
       row.className = `layer-row${isHidden ? ' layer-hidden' : ''}`;
       const safeName = escapeHtml(name);
       row.innerHTML = `
-        <button class="layer-eye-btn" title="${isHidden ? 'Show' : 'Hide'}">${isHidden ? EYE_OFF : EYE_ON}</button>
-        <span class="layer-row-name" title="${safeName}">${safeName}</span>
-        <div class="layer-controls">
-          <input type="number" class="layer-opacity-input" min="0" max="100" value="${opacity}" title="Opacity %">
-          <button class="layer-color-btn${color ? ' has-color' : ''}" style="${color ? `background:${color}` : ''}" title="Override fill color" type="button"></button>
-          <button class="layer-color-reset-btn${color ? '' : ' hidden'}" title="Reset color">✕</button>
-          <button class="layer-solo-btn${isSolo ? ' active' : ''}" title="Solo">S</button>
+        <div class="lr-top">
+          <button class="layer-eye-btn" title="${isHidden ? 'Show' : 'Hide'} layer" aria-label="${isHidden ? 'Show' : 'Hide'} layer: ${safeName}">${isHidden ? EYE_OFF : EYE_ON}</button>
+          <span class="layer-row-name" title="${safeName}">${safeName}</span>
+          <button class="layer-solo-btn${isSolo ? ' active' : ''}" title="Solo this layer" aria-label="Solo: ${safeName}">S</button>
+        </div>
+        <div class="lr-props">
+          <span class="lr-lbl">op</span><input type="number" class="lp-num lp-opacity" min="0" max="100" value="${opacity}" title="Opacity % (double-click to reset)" aria-label="Opacity for ${safeName}">
+          <span class="lr-lbl">str</span><input type="number" class="lp-num lp-stroke" min="0.1" max="10" step="0.1" value="${strokeMult.toFixed(1)}" title="Stroke multiplier (double-click to reset)" aria-label="Stroke for ${safeName}">
+          <span class="lr-lbl">sc</span><input type="number" class="lp-num lp-scale" min="10" max="500" value="${scale}" title="Scale % (double-click to reset)" aria-label="Scale for ${safeName}">
+          <span class="lr-lbl">rot</span><input type="number" class="lp-num lp-rot" min="-360" max="360" value="${rotation}" title="Rotation degrees (double-click to reset)" aria-label="Rotation for ${safeName}">
+          <span class="lr-lbl">x</span><input type="number" class="lp-num lp-posx" min="-2000" max="2000" value="${posX}" title="Position X offset (double-click to reset)" aria-label="Position X for ${safeName}">
+          <span class="lr-lbl">y</span><input type="number" class="lp-num lp-posy" min="-2000" max="2000" value="${posY}" title="Position Y offset (double-click to reset)" aria-label="Position Y for ${safeName}">
+          <button class="layer-color-btn${color ? ' has-color' : ''}" style="${color ? `background:${color}` : ''}" title="Override fill color" aria-label="Color override for ${safeName}" type="button"></button>
+          <button class="layer-color-reset-btn${color ? '' : ' hidden'}" title="Reset color" aria-label="Reset color for ${safeName}">&#x2715;</button>
         </div>`;
 
       row.querySelector('.layer-eye-btn').addEventListener('click', () =>
         setOv(key, 'visible', isHidden ? undefined : false)
       );
-      (function attachOpacityScrub(input) {
+
+      function makeScrub(sel, min, max, speed, defVal, isFloat, field) {
+        const input = row.querySelector(sel);
+        // Dim inputs that are at default value
+        function updateDimming(v) {
+          const atDefault = isFloat ? Math.abs(v - defVal) < 0.05 : v === defVal;
+          input.classList.toggle('lp-default', atDefault);
+        }
+        updateDimming(parseFloat(input.value));
         input.addEventListener('mousedown', e => {
           if (e.button !== 0) return;
-          e.preventDefault();               // block text cursor during drag
-          const startX   = e.clientX;
-          const startVal = parseInt(input.value) || 100;
+          e.preventDefault();
+          const startX = e.clientX;
+          const startVal = parseFloat(input.value);
           let dragged = false;
-
           function onMove(ev) {
             const dx = ev.clientX - startX;
             if (!dragged && Math.abs(dx) < 2) return;
             dragged = true;
-            const newVal = Math.max(0, Math.min(100, Math.round(startVal + dx)));
-            input.value = newVal;
-            setOv(key, 'opacity', newVal === 100 ? undefined : newVal);
+            let v = startVal + dx * speed;
+            v = Math.max(min, Math.min(max, v));
+            v = isFloat ? Math.round(v * 10) / 10 : Math.round(v);
+            input.value = isFloat ? v.toFixed(1) : v;
+            updateDimming(v);
+            setOv(key, field, v === defVal ? undefined : v);
           }
           function onUp() {
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('mouseup', onUp);
-            if (!dragged) { input.focus(); input.select(); }  // click → type mode
+            if (!dragged) { input.focus(); input.select(); }
           }
           document.addEventListener('mousemove', onMove);
           document.addEventListener('mouseup', onUp);
         });
         input.addEventListener('change', e => {
-          const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
-          setOv(key, 'opacity', val === 100 ? undefined : val);
+          let v = parseFloat(e.target.value);
+          if (isNaN(v)) v = defVal;
+          v = Math.max(min, Math.min(max, v));
+          v = isFloat ? Math.round(v * 10) / 10 : Math.round(v);
+          input.value = isFloat ? v.toFixed(1) : v;
+          updateDimming(v);
+          setOv(key, field, v === defVal ? undefined : v);
         });
-      })(row.querySelector('.layer-opacity-input'));
+        // Double-click resets to default value
+        input.addEventListener('dblclick', e => {
+          e.preventDefault();
+          input.value = isFloat ? defVal.toFixed(1) : defVal;
+          updateDimming(defVal);
+          setOv(key, field, undefined);
+        });
+      }
+
+      makeScrub('.lp-opacity', 0,     100,  1,    100, false, 'opacity');
+      makeScrub('.lp-stroke',  0.1,   10,   0.05, 1,   true,  'strokeMult');
+      makeScrub('.lp-scale',   10,    500,  0.5,  100, false, 'scale');
+      makeScrub('.lp-rot',     -360,  360,  0.5,  0,   false, 'rotation');
+      makeScrub('.lp-posx',    -2000, 2000, 3,    0,   false, 'posX');
+      makeScrub('.lp-posy',    -2000, 2000, 3,    0,   false, 'posY');
+
       // Use the global off-screen color picker; position it near the button so the
       // native OS picker opens in the right place, not at the top-left of the screen.
       row.querySelector('.layer-color-btn').addEventListener('click', (evt) => {
@@ -1833,7 +2093,6 @@
         const sig  = window._colorPickerAbort.signal;
         const el   = document.getElementById('layer-color-global');
         const rect = evt.currentTarget.getBoundingClientRect();
-        // Move to just below the button (fixed coords = viewport coords)
         el.style.top  = Math.min(rect.bottom, window.innerHeight - 4) + 'px';
         el.style.left = Math.min(rect.left,   window.innerWidth  - 4) + 'px';
         el.value  = color || '#ffffff';
@@ -1886,8 +2145,13 @@
     section.style.display = 'block';
   }
 
+  document.getElementById('btn-layers-reset-all').addEventListener('click', () => {
+    layerOverrides = {};
+    soloLayerIndex = null;
+    renderLayersPanel(); refreshLayersPreview();
+  });
   document.getElementById('btn-layers-show-all').addEventListener('click', () => {
-    // Only clear visibility/solo — preserve color and opacity edits
+    // Only clear visibility/solo — preserve color, opacity, transform edits
     Object.values(layerOverrides).forEach(ov => { delete ov.visible; });
     soloLayerIndex = null;
     renderLayersPanel(); refreshLayersPreview();
@@ -2098,7 +2362,8 @@
     hdr.className = 'blp-controls-header';
     hdr.innerHTML = `<span style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)">${layers.length} layers</span><div style="display:flex;gap:4px"><button class="layers-action-btn blp-show">Show all</button><button class="layers-action-btn blp-hide">Hide all</button></div>`;
     hdr.querySelector('.blp-show').addEventListener('click', () => {
-      item.layerOverrides = {}; item.soloLayerIndex = null;
+      Object.values(item.layerOverrides).forEach(ov => { delete ov.visible; });
+      item.soloLayerIndex = null;
       renderBatchLayerPanel(itemIndex);
     });
     hdr.querySelector('.blp-hide').addEventListener('click', () => {
@@ -2269,7 +2534,123 @@
     downloadBlob = null;
 
     renderLayersPanel();
+    renderSVGSection();
   }
+
+  // ─────────────────────────────────────────
+  // SVG Vector Section
+  // ─────────────────────────────────────────
+  let svgRendererAnim = null;
+  let svgRendererDiv  = null;
+
+  function initSVGRenderer() {
+    if (svgRendererDiv) { try { svgRendererAnim.destroy(); } catch(e) {} svgRendererDiv.remove(); svgRendererAnim = null; svgRendererDiv = null; }
+    const data = getWorkingAnimData();
+    if (!data) return;
+    svgRendererDiv = document.createElement('div');
+    svgRendererDiv.style.cssText = 'position:fixed;left:-9999px;top:0;width:' + data.w + 'px;height:' + data.h + 'px;visibility:hidden;pointer-events:none;';
+    document.body.appendChild(svgRendererDiv);
+    svgRendererAnim = lottie.loadAnimation({
+      container: svgRendererDiv,
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      animationData: JSON.parse(JSON.stringify(data)),
+    });
+    svgRendererAnim.addEventListener('DOMLoaded', () => updateSVGPreview());
+  }
+
+  function updateSVGPreview() {
+    if (!svgRendererAnim || !svgRendererDiv) return;
+    const frame = parseInt(document.getElementById('svg-frame-slider')?.value || 0);
+    const ip = animInfo?.ip || 0;
+    svgRendererAnim.goToAndStop(ip + frame, true);
+    requestAnimationFrame(() => {
+      const svgEl = svgRendererDiv.querySelector('svg');
+      if (!svgEl) return;
+      const previewBox = document.getElementById('svg-preview-box');
+      if (previewBox) {
+        const clone = svgEl.cloneNode(true);
+        cleanSVG(clone, animData.w, animData.h);
+        previewBox.innerHTML = '';
+        previewBox.appendChild(clone);
+      }
+    });
+  }
+
+  function cleanSVG(el, w, h) {
+    el.setAttribute('width',   w);
+    el.setAttribute('height',  h);
+    el.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    el.setAttribute('xmlns',   'http://www.w3.org/2000/svg');
+    el.removeAttribute('style');
+    el.style.cssText = 'display:block;max-width:100%;height:auto;';
+  }
+
+  function getSVGString() {
+    const svgEl = svgRendererDiv?.querySelector('svg');
+    if (!svgEl) return null;
+    const clone = svgEl.cloneNode(true);
+    cleanSVG(clone, animData.w, animData.h);
+    // For download/copy, remove the inline display style and keep it clean
+    clone.removeAttribute('style');
+    clone.setAttribute('width',   animData.w);
+    clone.setAttribute('height',  animData.h);
+    clone.setAttribute('viewBox', '0 0 ' + animData.w + ' ' + animData.h);
+    clone.setAttribute('xmlns',   'http://www.w3.org/2000/svg');
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + clone.outerHTML;
+  }
+
+  function destroySVGRenderer() {
+    if (svgRendererAnim) { try { svgRendererAnim.destroy(); } catch(e) {} svgRendererAnim = null; }
+    if (svgRendererDiv) { svgRendererDiv.remove(); svgRendererDiv = null; }
+  }
+
+  function renderSVGSection() {
+    const section = document.getElementById('svg-section');
+    if (!animData || batchMode) { section.style.display = 'none'; destroySVGRenderer(); return; }
+    section.style.display = 'block';
+    const slider = document.getElementById('svg-frame-slider');
+    const frames = animInfo?.frames || 1;
+    slider.max = frames - 1;
+    document.getElementById('svg-frame-label').textContent = (slider.value || 0) + ' / ' + (frames - 1);
+    document.getElementById('svg-frame-badge').textContent = slider.value || 0;
+    initSVGRenderer();
+  }
+
+  // Frame slider
+  document.getElementById('svg-frame-slider').addEventListener('input', e => {
+    const f = parseInt(e.target.value);
+    document.getElementById('svg-frame-label').textContent = f + ' / ' + ((animInfo?.frames || 1) - 1);
+    document.getElementById('svg-frame-badge').textContent = f;
+    updateSVGPreview();
+  });
+
+  // Download button
+  document.getElementById('btn-svg-download').addEventListener('click', () => {
+    const src = getSVGString();
+    if (!src) return;
+    const blob = new Blob([src], { type: 'image/svg+xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (animInfo?.baseName || 'frame') + '_frame' + (document.getElementById('svg-frame-slider').value || 0) + '.svg';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+
+  // Copy button
+  document.getElementById('btn-svg-copy').addEventListener('click', async () => {
+    const src = getSVGString();
+    if (!src) return;
+    const btn = document.getElementById('btn-svg-copy');
+    try {
+      await navigator.clipboard.writeText(src);
+      btn.textContent = 'Kopyaland\u0131!';
+    } catch(e) {
+      btn.textContent = 'Hata';
+    }
+    setTimeout(() => { btn.textContent = 'Kodu Kopyala'; }, 1500);
+  });
 
   // ─────────────────────────────────────────
   // Export router
@@ -2283,7 +2664,7 @@
       const fmt = document.querySelector('input[name="format"]:checked').value;
       if (fmt === 'png') {
         const hasLayers = getEditableLayers(animData).length > 1;
-        if (separateLayersMode && hasLayers) await exportPNGSeparateLayers();
+        if (separateLayersMode && hasLayers) await exportVectorAE();
         else await exportPNG();
       }
       else if (fmt === 'mp4') await exportVideo();
@@ -2295,6 +2676,10 @@
       progOverlay.classList.remove('active');
       btnExport.disabled = false;
       progEyebrow.textContent = 'Rendering frames';
+      // Clean up any leaked off-screen renderer divs
+      document.querySelectorAll('body > div[style*="position:fixed"][style*="overflow:hidden"]').forEach(d => {
+        if (d.style.top.startsWith('-') && d.querySelector('canvas')) d.remove();
+      });
     }
   });
 
@@ -2337,9 +2722,19 @@
     });
 
     const canvas = div.querySelector('canvas');
-    if (!canvas) throw new Error('Lottie canvas not found');
+    if (!canvas) {
+      anim.destroy();
+      if (document.body.contains(div)) document.body.removeChild(div);
+      throw new Error('Lottie canvas not found');
+    }
 
-    return { anim, canvas, div };
+    // Safe cleanup helper — call if export fails mid-render
+    function destroy() {
+      try { anim.destroy(); } catch(e) {}
+      if (document.body.contains(div)) document.body.removeChild(div);
+    }
+
+    return { anim, canvas, div, destroy };
   }
 
   async function exportPNG() {
@@ -2385,6 +2780,34 @@
     await setProgress(100, frames, 'Done!');
     isExporting = false;
     onExportSuccess(content, `${animInfo.baseName}_ae_export.zip`, 'png', null);
+  }
+
+  // ─────────────────────────────────────────
+  // Vector AE export — generates a JSX script
+  // that creates native AE shape layers from
+  // the Lottie JSON (no rendering needed).
+  // ─────────────────────────────────────────
+  async function exportVectorAE() {
+    progOverlay.classList.add('active');
+    btnExport.disabled = true;
+    progEyebrow.textContent = 'Generating vectors';
+    await setProgress(0, 0, 'Vektörler hazırlanıyor…');
+    const workingData = getWorkingAnimData();
+    if (!workingData) { showToast('Animasyon verisi bulunamadı.'); releaseOverlay(); return; }
+    await setProgress(50, 0, 'AE scripti oluşturuluyor…');
+    try {
+      const jsx = buildVectorAEScript(workingData, animInfo);
+      await setProgress(100, 0, 'İndiriliyor…');
+      const blob = new Blob([jsx], { type: 'application/octet-stream' });
+      const { baseName } = animInfo;
+      progEyebrow.textContent = 'Rendering frames';
+      isExporting = false;
+      onExportSuccess(blob, `${baseName}_vectors.jsx`, 'png-layers', 1);
+    } catch (e) {
+      console.error('Vector AE export failed:', e);
+      showToast('Vektör export başarısız — lütfen tekrar deneyin.');
+      releaseOverlay();
+    }
   }
 
   // ─────────────────────────────────────────
@@ -2851,6 +3274,493 @@
       sub.textContent   = 'Drop it into emails, docs, Figma, presentations — works everywhere.';
       steps.style.display = 'none';
       dlLbl.textContent = 'Download GIF';
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // Vector AE Script — native shape layers
+  // ─────────────────────────────────────────
+  function buildVectorAEScript(data, animInfo) {
+    const { w, h, fps, frames, ip, duration, baseName } = animInfo;
+    const ipNum = ip || 0;
+    const assets = data.assets || [];
+    const rootLayers = data.layers || [];
+
+    // ── Helpers to serialise JS values for the JSX output ──
+    function jsArr(arr) {
+      if (!Array.isArray(arr)) return '[]';
+      return '[' + arr.map(v => {
+        if (Array.isArray(v)) return jsArr(v);
+        if (v === null || v === undefined) return '0';
+        return String(v);
+      }).join(',') + ']';
+    }
+
+    function jsPath(p) {
+      // p = {v, i, o, c}
+      if (!p) return 'null';
+      return '{v:' + jsArr(p.v) + ',i:' + jsArr(p.i) + ',o:' + jsArr(p.o) + ',c:' + (p.c ? 'true' : 'false') + '}';
+    }
+
+    // ── Main JSX code accumulator ──
+    const lines = [];
+    function emit(s) { lines.push(s); }
+
+    emit('// ─────────────────────────────────────────────────');
+    emit('// AfterPNG — Native Vector AE Export');
+    emit('// Generated from Lottie JSON');
+    emit('// HOW TO USE:');
+    emit('//   After Effects → File → Scripts → Run Script File…');
+    emit('//   Select this file. Done!');
+    emit('// ─────────────────────────────────────────────────');
+    emit('(function vectorImport() {');
+    emit('  app.beginUndoGroup("Lottie Vector Import");');
+    emit('');
+    emit('  // Helper: set Shape from path data');
+    emit('  function makeShape(pd) {');
+    emit('    var s = new Shape();');
+    emit('    s.vertices   = pd.v;');
+    emit('    s.inTangents  = pd.i;');
+    emit('    s.outTangents = pd.o;');
+    emit('    s.closed      = pd.c;');
+    emit('    return s;');
+    emit('  }');
+    emit('');
+    emit('  // Helper: set static or animated value on a property');
+    emit('  function applyProp(prop, lottieVal, ip, fps, isColor) {');
+    emit('    if (!lottieVal || prop == null) return;');
+    emit('    if (lottieVal.a === 1 && lottieVal.k && lottieVal.k.length) {');
+    emit('      for (var ki = 0; ki < lottieVal.k.length; ki++) {');
+    emit('        var kf = lottieVal.k[ki];');
+    emit('        if (kf.t === undefined) continue;');
+    emit('        var t = (kf.t - ip) / fps;');
+    emit('        var val;');
+    emit('        if (kf.s) {');
+    emit('          val = (kf.s.length === 1 && !isColor) ? kf.s[0] : kf.s;');
+    emit('          if (isColor && val.length >= 3) val = [val[0], val[1], val[2]];');
+    emit('        } else continue;');
+    emit('        try { prop.setValueAtTime(t, val); } catch(e) {}');
+    emit('      }');
+    emit('    } else {');
+    emit('      var v = lottieVal.k;');
+    emit('      if (v === undefined || v === null) return;');
+    emit('      if (isColor && Array.isArray(v) && v.length >= 3) v = [v[0], v[1], v[2]];');
+    emit('      try { prop.setValue(Array.isArray(v) && v.length === 1 ? v[0] : v); } catch(e) {}');
+    emit('    }');
+    emit('  }');
+    emit('');
+    emit('  // Helper: set static or animated path on a shape property');
+    emit('  function applyPathProp(prop, lottieVal, ip, fps) {');
+    emit('    if (!lottieVal || prop == null) return;');
+    emit('    if (lottieVal.a === 1 && Array.isArray(lottieVal.k)) {');
+    emit('      for (var ki = 0; ki < lottieVal.k.length; ki++) {');
+    emit('        var kf = lottieVal.k[ki];');
+    emit('        if (kf.t === undefined) continue;');
+    emit('        var t = (kf.t - ip) / fps;');
+    emit('        var pd = kf.s ? (Array.isArray(kf.s) && kf.s[0] && kf.s[0].v ? kf.s[0] : kf.s) : null;');
+    emit('        if (!pd || !pd.v) continue;');
+    emit('        try { prop.setValueAtTime(t, makeShape(pd)); } catch(e) {}');
+    emit('      }');
+    emit('    } else {');
+    emit('      var pk = lottieVal.k;');
+    emit('      if (pk && pk.v) {');
+    emit('        try { prop.setValue(makeShape(pk)); } catch(e) {}');
+    emit('      }');
+    emit('    }');
+    emit('  }');
+    emit('');
+
+    // ── Build precomp sub-compositions first ──
+    // Collect precomp assets (assets with layers)
+    const precompAssets = assets.filter(a => a.layers && a.layers.length);
+    const precompVarMap = {}; // assetId -> JSX var name
+
+    precompAssets.forEach((asset, ai) => {
+      const varName = 'precomp_' + ai;
+      precompVarMap[asset.id] = varName;
+      const aw = asset.w || w;
+      const ah = asset.h || h;
+      const afr = asset.fr || fps;
+      // Duration: use the asset's own frame range if available, else main comp duration
+      const aFrames = frames;
+      const aDur = parseFloat(duration);
+
+      emit('  // Precomp asset: ' + (asset.id || ai));
+      emit('  var ' + varName + ' = app.project.items.addComp("' +
+        String(asset.id || 'precomp_' + ai).replace(/"/g, '\\"') +
+        '", ' + aw + ', ' + ah + ', 1, ' + aDur + ', ' + afr + ');');
+
+      // Add layers to precomp (reverse order for correct stacking)
+      const aLayers = asset.layers || [];
+      for (let li = aLayers.length - 1; li >= 0; li--) {
+        emitLayer(aLayers[li], varName, 'pc' + ai + '_' + li, ipNum);
+      }
+      emit('');
+    });
+
+    // ── Create main composition ──
+    emit('  var comp = app.project.items.addComp("' +
+      baseName.replace(/"/g, '\\"') + '_vectors", ' +
+      w + ', ' + h + ', 1, ' + parseFloat(duration) + ', ' + fps + ');');
+    emit('');
+
+    // Add root layers in reverse order
+    for (let li = rootLayers.length - 1; li >= 0; li--) {
+      emitLayer(rootLayers[li], 'comp', 'lyr' + li, ipNum);
+    }
+
+    emit('');
+    emit('  comp.openInViewer();');
+    emit('  app.endUndoGroup();');
+    emit('  alert("Vektörel import tamamlandı!\\n\\n' +
+      baseName.replace(/"/g, '\\"') + '\\n' +
+      w + 'x' + h + ' @ ' + fps + 'fps\\n' +
+      rootLayers.length + ' layer (native shape)");');
+    emit('})();');
+
+    return lines.join('\n');
+
+    // ═══════════════════════════════════════════
+    // emitLayer — add one Lottie layer to a comp
+    // ═══════════════════════════════════════════
+    function emitLayer(layer, compVar, prefix, ipOff) {
+      if (!layer) return;
+      const ty = layer.ty;
+      const nm = (layer.nm || 'layer').replace(/"/g, '\\"').replace(/\\/g, '\\\\');
+
+      // ty=3: null object
+      if (ty === 3) {
+        emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull();');
+        emit('  ' + prefix + '.name = "' + nm + '";');
+        emitLayerTransform(prefix, layer, ipOff);
+        emitLayerTiming(prefix, layer, ipOff);
+        return;
+      }
+
+      // ty=1: solid
+      if (ty === 1) {
+        const sc = layer.sc || '#000000';
+        // Parse hex color to [r,g,b] 0-1
+        const r = parseInt(sc.slice(1, 3), 16) / 255;
+        const g = parseInt(sc.slice(3, 5), 16) / 255;
+        const b = parseInt(sc.slice(5, 7), 16) / 255;
+        const sw = layer.sw || w;
+        const sh = layer.sh || h;
+        emit('  var ' + prefix + ' = ' + compVar + '.layers.addSolid([' +
+          r.toFixed(4) + ',' + g.toFixed(4) + ',' + b.toFixed(4) + '], "' +
+          nm + '", ' + sw + ', ' + sh + ', 1);');
+        emitLayerTransform(prefix, layer, ipOff);
+        emitLayerTiming(prefix, layer, ipOff);
+        return;
+      }
+
+      // ty=0: precomp reference
+      if (ty === 0) {
+        const refId = layer.refId;
+        const pcVar = precompVarMap[refId];
+        if (pcVar) {
+          emit('  var ' + prefix + ' = ' + compVar + '.layers.add(' + pcVar + ');');
+          emit('  ' + prefix + '.name = "' + nm + '";');
+        } else {
+          // Fallback: add as null if precomp not found
+          emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull();');
+          emit('  ' + prefix + '.name = "' + nm + ' (precomp ref missing)";');
+        }
+        emitLayerTransform(prefix, layer, ipOff);
+        emitLayerTiming(prefix, layer, ipOff);
+        return;
+      }
+
+      // ty=4: shape layer
+      if (ty === 4) {
+        emit('  var ' + prefix + ' = ' + compVar + '.layers.addShape();');
+        emit('  ' + prefix + '.name = "' + nm + '";');
+
+        // Process shapes
+        const shapes = layer.shapes || [];
+        const contentsVar = prefix + '.property("ADBE Root Vectors Group")';
+        for (let si = 0; si < shapes.length; si++) {
+          emitShapeItem(shapes[si], contentsVar, prefix + '_s' + si, ipOff);
+        }
+
+        emitLayerTransform(prefix, layer, ipOff);
+        emitLayerTiming(prefix, layer, ipOff);
+        return;
+      }
+
+      // ty=5 (text) and others: add as null placeholder
+      emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull();');
+      emit('  ' + prefix + '.name = "' + nm + ' (unsupported ty=' + ty + ')";');
+      emitLayerTransform(prefix, layer, ipOff);
+      emitLayerTiming(prefix, layer, ipOff);
+    }
+
+    // ═══════════════════════════════════════════
+    // emitShapeItem — recursively add shape items
+    // ═══════════════════════════════════════════
+    function emitShapeItem(shape, parentPropExpr, varPrefix, ipOff) {
+      if (!shape) return;
+      const ty = shape.ty;
+
+      // ── gr: shape group ──
+      if (ty === 'gr') {
+        const grpName = (shape.nm || 'Group').replace(/"/g, '\\"');
+        const grpVar = varPrefix + '_grp';
+        emit('  var ' + grpVar + ' = ' + parentPropExpr + '.addProperty("ADBE Vector Group");');
+        emit('  ' + grpVar + '.name = "' + grpName + '";');
+        const items = shape.it || [];
+        const childContents = grpVar + '.property("ADBE Vectors Group")';
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          // Transform item (tr) is handled specially
+          if (item.ty === 'tr') {
+            emitGroupTransform(grpVar, item, ipOff);
+          } else {
+            emitShapeItem(item, childContents, varPrefix + '_' + i, ipOff);
+          }
+        }
+        return;
+      }
+
+      // ── sh: freeform path ──
+      if (ty === 'sh') {
+        const shName = (shape.nm || 'Path').replace(/"/g, '\\"');
+        const shVar = varPrefix + '_sh';
+        emit('  var ' + shVar + ' = ' + parentPropExpr + '.addProperty("ADBE Vector Shape - Group");');
+        emit('  ' + shVar + '.name = "' + shName + '";');
+        if (shape.ks) {
+          emit('  var ' + shVar + '_p = ' + shVar + '.property("ADBE Vector Shape");');
+          emitPathProperty(shVar + '_p', shape.ks, ipOff);
+        }
+        return;
+      }
+
+      // ── rc: rectangle ──
+      if (ty === 'rc') {
+        const rcName = (shape.nm || 'Rectangle').replace(/"/g, '\\"');
+        const rcVar = varPrefix + '_rc';
+        emit('  var ' + rcVar + ' = ' + parentPropExpr + '.addProperty("ADBE Vector Shape - Rect");');
+        emit('  ' + rcVar + '.name = "' + rcName + '";');
+        if (shape.p) {
+          emit('  applyProp(' + rcVar + '.property("ADBE Vector Rect Position"), ' +
+            JSON.stringify(shape.p) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        if (shape.s) {
+          emit('  applyProp(' + rcVar + '.property("ADBE Vector Rect Size"), ' +
+            JSON.stringify(shape.s) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        if (shape.r) {
+          emit('  applyProp(' + rcVar + '.property("ADBE Vector Rect Roundness"), ' +
+            JSON.stringify(shape.r) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        return;
+      }
+
+      // ── el: ellipse ──
+      if (ty === 'el') {
+        const elName = (shape.nm || 'Ellipse').replace(/"/g, '\\"');
+        const elVar = varPrefix + '_el';
+        emit('  var ' + elVar + ' = ' + parentPropExpr + '.addProperty("ADBE Vector Shape - Ellipse");');
+        emit('  ' + elVar + '.name = "' + elName + '";');
+        if (shape.p) {
+          emit('  applyProp(' + elVar + '.property("ADBE Vector Ellipse Position"), ' +
+            JSON.stringify(shape.p) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        if (shape.s) {
+          emit('  applyProp(' + elVar + '.property("ADBE Vector Ellipse Size"), ' +
+            JSON.stringify(shape.s) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        return;
+      }
+
+      // ── fl: fill ──
+      if (ty === 'fl') {
+        const flName = (shape.nm || 'Fill').replace(/"/g, '\\"');
+        const flVar = varPrefix + '_fl';
+        emit('  var ' + flVar + ' = ' + parentPropExpr + '.addProperty("ADBE Vector Graphic - Fill");');
+        emit('  ' + flVar + '.name = "' + flName + '";');
+        if (shape.c) {
+          emit('  applyProp(' + flVar + '.property("ADBE Vector Fill Color"), ' +
+            JSON.stringify(shape.c) + ', ' + ipOff + ', ' + fps + ', true);');
+        }
+        if (shape.o) {
+          emit('  applyProp(' + flVar + '.property("ADBE Vector Fill Opacity"), ' +
+            JSON.stringify(shape.o) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        // Fill rule
+        if (shape.r !== undefined) {
+          const fillRule = shape.r === 2 ? 2 : 1; // 1=nonzero, 2=evenodd
+          emit('  try { ' + flVar + '.property("ADBE Vector Fill Rule").setValue(' + fillRule + '); } catch(e) {}');
+        }
+        return;
+      }
+
+      // ── st: stroke ──
+      if (ty === 'st') {
+        const stName = (shape.nm || 'Stroke').replace(/"/g, '\\"');
+        const stVar = varPrefix + '_st';
+        emit('  var ' + stVar + ' = ' + parentPropExpr + '.addProperty("ADBE Vector Graphic - Stroke");');
+        emit('  ' + stVar + '.name = "' + stName + '";');
+        if (shape.c) {
+          emit('  applyProp(' + stVar + '.property("ADBE Vector Stroke Color"), ' +
+            JSON.stringify(shape.c) + ', ' + ipOff + ', ' + fps + ', true);');
+        }
+        if (shape.o) {
+          emit('  applyProp(' + stVar + '.property("ADBE Vector Stroke Opacity"), ' +
+            JSON.stringify(shape.o) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        if (shape.w) {
+          emit('  applyProp(' + stVar + '.property("ADBE Vector Stroke Width"), ' +
+            JSON.stringify(shape.w) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        // Line cap: 1=butt, 2=round, 3=projecting
+        if (shape.lc) {
+          emit('  try { ' + stVar + '.property("ADBE Vector Stroke Line Cap").setValue(' + shape.lc + '); } catch(e) {}');
+        }
+        // Line join: 1=miter, 2=round, 3=bevel
+        if (shape.lj) {
+          emit('  try { ' + stVar + '.property("ADBE Vector Stroke Line Join").setValue(' + shape.lj + '); } catch(e) {}');
+        }
+        return;
+      }
+
+      // ── tm: trim paths ──
+      if (ty === 'tm') {
+        const tmName = (shape.nm || 'Trim Paths').replace(/"/g, '\\"');
+        const tmVar = varPrefix + '_tm';
+        emit('  var ' + tmVar + ' = ' + parentPropExpr + '.addProperty("ADBE Vector Filter - Trim");');
+        emit('  ' + tmVar + '.name = "' + tmName + '";');
+        if (shape.s) {
+          emit('  applyProp(' + tmVar + '.property("ADBE Vector Trim Start"), ' +
+            JSON.stringify(shape.s) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        if (shape.e) {
+          emit('  applyProp(' + tmVar + '.property("ADBE Vector Trim End"), ' +
+            JSON.stringify(shape.e) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        if (shape.o) {
+          emit('  applyProp(' + tmVar + '.property("ADBE Vector Trim Offset"), ' +
+            JSON.stringify(shape.o) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+        // Trim multiple shapes: 1=simultaneously, 2=individually
+        if (shape.m) {
+          emit('  try { ' + tmVar + '.property("ADBE Vector Trim Type").setValue(' + shape.m + '); } catch(e) {}');
+        }
+        return;
+      }
+
+      // ── Unsupported shape types: skip silently ──
+    }
+
+    // ═══════════════════════════════════════════
+    // emitPathProperty — static or animated path
+    // ═══════════════════════════════════════════
+    function emitPathProperty(propExpr, ks, ipOff) {
+      if (!ks) return;
+      if (ks.a === 1 && Array.isArray(ks.k)) {
+        // Animated path: each keyframe has .s[0] = path data
+        for (let ki = 0; ki < ks.k.length; ki++) {
+          const kf = ks.k[ki];
+          if (kf.t === undefined) continue;
+          const t = ((kf.t - ipOff) / fps).toFixed(4);
+          let pd = kf.s ? (Array.isArray(kf.s) && kf.s[0] && kf.s[0].v ? kf.s[0] : kf.s) : null;
+          if (!pd || !pd.v) continue;
+          emit('  try { ' + propExpr + '.setValueAtTime(' + t + ', makeShape(' + jsPath(pd) + ')); } catch(e) {}');
+        }
+      } else {
+        // Static path
+        const pk = ks.k;
+        if (pk && pk.v) {
+          emit('  try { ' + propExpr + '.setValue(makeShape(' + jsPath(pk) + ')); } catch(e) {}');
+        }
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // emitGroupTransform — transform inside shape group
+    // ═══════════════════════════════════════════
+    function emitGroupTransform(grpVar, tr, ipOff) {
+      if (!tr) return;
+      const txVar = grpVar + '.property("ADBE Vector Transform Group")';
+      if (tr.p) {
+        emit('  applyProp(' + txVar + '.property("ADBE Vector Position"), ' +
+          JSON.stringify(tr.p) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+      if (tr.a) {
+        emit('  applyProp(' + txVar + '.property("ADBE Vector Anchor"), ' +
+          JSON.stringify(tr.a) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+      if (tr.s) {
+        emit('  applyProp(' + txVar + '.property("ADBE Vector Scale"), ' +
+          JSON.stringify(tr.s) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+      if (tr.r) {
+        emit('  applyProp(' + txVar + '.property("ADBE Vector Rotation"), ' +
+          JSON.stringify(tr.r) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+      if (tr.o) {
+        emit('  applyProp(' + txVar + '.property("ADBE Vector Group Opacity"), ' +
+          JSON.stringify(tr.o) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // emitLayerTransform — AE layer transform props
+    // ═══════════════════════════════════════════
+    function emitLayerTransform(prefix, layer, ipOff) {
+      const ks = layer.ks;
+      if (!ks) return;
+      const txExpr = prefix + '.property("ADBE Transform Group")';
+      // Anchor Point
+      if (ks.a) {
+        emit('  applyProp(' + txExpr + '.property("ADBE Anchor Point"), ' +
+          JSON.stringify(ks.a) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+      // Position — may be split into px/py
+      if (ks.p) {
+        if (ks.p.s === 1 || (ks.p.x !== undefined && ks.p.y !== undefined)) {
+          // Separated X/Y position
+          emit('  ' + prefix + '.property("ADBE Transform Group").property("ADBE Position").dimensionsSeparated = true;');
+          if (ks.p.x) {
+            emit('  applyProp(' + txExpr + '.property("ADBE Position_0"), ' +
+              JSON.stringify(ks.p.x) + ', ' + ipOff + ', ' + fps + ', false);');
+          }
+          if (ks.p.y) {
+            emit('  applyProp(' + txExpr + '.property("ADBE Position_1"), ' +
+              JSON.stringify(ks.p.y) + ', ' + ipOff + ', ' + fps + ', false);');
+          }
+        } else {
+          emit('  applyProp(' + txExpr + '.property("ADBE Position"), ' +
+            JSON.stringify(ks.p) + ', ' + ipOff + ', ' + fps + ', false);');
+        }
+      }
+      // Scale
+      if (ks.s) {
+        emit('  applyProp(' + txExpr + '.property("ADBE Scale"), ' +
+          JSON.stringify(ks.s) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+      // Rotation
+      if (ks.r) {
+        emit('  applyProp(' + txExpr + '.property("ADBE Rotate Z"), ' +
+          JSON.stringify(ks.r) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+      // Opacity
+      if (ks.o) {
+        emit('  applyProp(' + txExpr + '.property("ADBE Opacity"), ' +
+          JSON.stringify(ks.o) + ', ' + ipOff + ', ' + fps + ', false);');
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // emitLayerTiming — in/out points
+    // ═══════════════════════════════════════════
+    function emitLayerTiming(prefix, layer, ipOff) {
+      if (layer.ip !== undefined) {
+        emit('  try { ' + prefix + '.inPoint = ' + ((layer.ip - ipOff) / fps).toFixed(4) + '; } catch(e) {}');
+      }
+      if (layer.op !== undefined) {
+        emit('  try { ' + prefix + '.outPoint = ' + ((layer.op - ipOff) / fps).toFixed(4) + '; } catch(e) {}');
+      }
     }
   }
 
