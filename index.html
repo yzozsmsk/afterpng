@@ -17,7 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.17/paper-full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -844,113 +843,6 @@
     .btn-edit-again:hover { border-color: var(--accent); color: var(--accent); }
     .btn-edit-again svg { stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 
-    /* ── Format Guide ── */
-    .guide {
-      width: 100%;
-      margin-top: 18px;
-    }
-    .guide.hidden {
-      display: none;
-    }
-    .guide-eyebrow {
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: .09em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 12px;
-      padding-left: 2px;
-    }
-    .guide-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-    .guide-grid.guide-grid-4 {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .gc {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-top: 2.5px solid var(--c, #444);
-      border-radius: var(--r-md);
-      padding: 14px 13px 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .gc-badge {
-      font-size: 9.5px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--c, #888);
-      margin-bottom: 6px;
-    }
-    .gc-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      margin-bottom: 10px;
-      line-height: 1.3;
-    }
-    .gc-list {
-      list-style: none;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-bottom: 12px;
-    }
-    .gc-list li {
-      font-size: 11px;
-      color: var(--text-2);
-      line-height: 1.4;
-      padding-left: 12px;
-      position: relative;
-    }
-    .gc-list li::before {
-      content: '';
-      position: absolute;
-      left: 2px;
-      top: 5px;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--c, #555);
-      opacity: .7;
-    }
-    .gc-how {
-      background: var(--surface2);
-      border-top: 1px solid var(--border);
-      margin: 0 -13px;
-      padding: 10px 13px;
-    }
-    .gc-how-label {
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      display: block;
-      margin-bottom: 4px;
-    }
-    .gc-how-text {
-      font-size: 11px;
-      color: var(--text-2);
-      line-height: 1.5;
-    }
-    .gc-how-text code {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 1px 4px;
-      border-radius: 3px;
-      font-size: 10px;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      color: var(--text);
-    }
-
     /* ── Toast ── */
     .toast {
       position: fixed;
@@ -1759,107 +1651,6 @@
     /* ── Group/Ungroup buttons ── */
     .vec-group-btns { display: flex; align-items: center; gap: 2px; }
 
-    /* ══════════════════════════════════════════════════════
-       PNG → SVG section
-    ══════════════════════════════════════════════════════ */
-    .img2svg-section {
-      width: 100%; max-width: 860px; margin: 0 auto 32px;
-      padding: 0 20px;
-    }
-    .img2svg-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--r-xl); overflow: hidden;
-    }
-    .img2svg-dz {
-      position: relative; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 10px;
-      padding: 44px 24px; cursor: pointer;
-      border-radius: var(--r-xl);
-      transition: background 0.15s, border-color 0.15s;
-    }
-    .img2svg-dz:hover, .img2svg-dz.drag-over {
-      background: var(--accent-glow); border-color: var(--accent);
-    }
-    .img2svg-dz input[type=file] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer;
-    }
-    .img2svg-dz-icon {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: var(--surface2); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .img2svg-dz-icon svg { width: 20px; height: 20px; stroke: var(--text-2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .img2svg-dz-title { font-size: 15px; font-weight: 600; color: var(--text); }
-    .img2svg-dz-sub {
-      font-size: 12px; color: var(--text-2);
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 20px; padding: 3px 12px;
-    }
-    .img2svg-workspace { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-    .img2svg-previews {
-      display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center;
-    }
-    .img2svg-preview-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-    .img2svg-preview-label { font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
-    .img2svg-preview-box {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: var(--r-md); overflow: hidden;
-      height: 280px; display: flex; align-items: center; justify-content: center;
-      position: relative;
-    }
-    .img2svg-preview-box img, .img2svg-preview-box svg {
-      max-width: 100%; max-height: 100%; object-fit: contain; display: block;
-    }
-    .img2svg-preview-box > div { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    .img2svg-preview-box > div svg { max-width: 100%; max-height: 100%; }
-    .img2svg-arrow { color: var(--text-3); font-size: 20px; flex-shrink: 0; }
-    .img2svg-controls {
-      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-      padding: 12px 0 4px; border-top: 1px solid var(--border);
-    }
-    .img2svg-q-label { font-size: 12px; color: var(--text-2); font-weight: 500; white-space: nowrap; }
-    .img2svg-q-btns { display: flex; gap: 4px; }
-    .img2svg-q-btn {
-      padding: 5px 11px; font-size: 12px; font-weight: 500; border-radius: 6px; cursor: pointer;
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text-2); transition: all 0.12s;
-    }
-    .img2svg-q-btn:hover { border-color: var(--border-hi); color: var(--text); }
-    .img2svg-q-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .img2svg-btn-trace {
-      padding: 7px 18px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer;
-      background: var(--accent); border: none; color: #fff; margin-left: auto;
-      transition: opacity 0.15s;
-    }
-    .img2svg-btn-trace:hover { opacity: 0.88; }
-    .img2svg-btn-trace:disabled { opacity: 0.45; cursor: not-allowed; }
-    .img2svg-btn-download {
-      padding: 7px 18px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer;
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); transition: all 0.12s;
-    }
-    .img2svg-btn-download:hover { border-color: var(--border-hi); }
-    .img2svg-status { font-size: 12px; color: var(--text-2); white-space: nowrap; }
-    .img2svg-loading {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--text-2);
-    }
-    .img2svg-loading::before {
-      content: ''; width: 16px; height: 16px; border-radius: 50%;
-      border: 2px solid var(--border); border-top-color: var(--accent);
-      animation: spin 0.7s linear infinite; flex-shrink: 0;
-    }
-    .img2svg-new-btn {
-      padding: 5px 12px; font-size: 12px; border-radius: 6px; cursor: pointer;
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text-2); transition: all 0.12s;
-    }
-    .img2svg-new-btn:hover { color: var(--text); border-color: var(--border-hi); }
-    @media (max-width: 600px) {
-      .img2svg-previews { grid-template-columns: 1fr; }
-      .img2svg-arrow { display: none; }
-      .img2svg-preview-box { height: 200px; }
-    }
   </style>
 </head>
 <body>
@@ -1878,7 +1669,7 @@
       <span class="logo-text">AfterPNG</span>
     </div>
     <h1 class="h-title">Export animations<br>to <em>After Effects</em></h1>
-    <p class="h-sub">Drop one or more JSON animation files — export as<br>PNG, MP4, APNG or GIF. Batch supported.</p>
+    <p class="h-sub">Drop Lottie JSON files — export as PNG, MOV, APNG or GIF.</p>
   </header>
 
   <!-- Drop Zone -->
@@ -1898,118 +1689,6 @@
     <input type="file" id="file-input" accept=".json" multiple aria-label="Select JSON animation files" />
   </div>
 
-  <!-- Format Guide -->
-  <section class="guide" id="guide">
-    <div class="guide-eyebrow">Format guide</div>
-    <div class="guide-grid guide-grid-4">
-
-      <div class="gc" style="--c: #fb923c">
-        <div class="gc-badge">Vektörel JSX</div>
-        <div class="gc-title">After Effects — Native vektör</div>
-        <ul class="gc-list">
-          <li>Sonsuz ölçeklenebilir, kayıpsız</li>
-          <li>Native AE shape layer olarak açılır</li>
-          <li>Tüm keyframe'ler korunur</li>
-          <li>Renk, path, stroke AE'de düzenlenebilir</li>
-        </ul>
-        <div class="gc-how">
-          <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">Layers panelinde <strong>Vektörel AE export</strong> toggle'ını aç → Format olarak <strong>PNG</strong> seç → Export → <code>_vectors.jsx</code> indirilir → AE'de <code>File → Scripts → Run Script File…</code> → dosyayı seç → comp otomatik oluşur, tüm layer'lar native shape layer olarak gelir.</p>
-        </div>
-      </div>
-
-      <div class="gc" style="--c: #4ade80">
-        <div class="gc-badge">PNG + Script</div>
-        <div class="gc-title">After Effects &amp; profesyonel</div>
-        <ul class="gc-list">
-          <li>Layer bazlı düzenleme</li>
-          <li>Sıfır kalite kaybı, lossless</li>
-          <li>Şeffaf arka plan (alfa)</li>
-          <li>Otomatik AE import scripti</li>
-        </ul>
-        <div class="gc-how">
-          <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">ZIP'i çıkart → AE'de <code>File → Scripts → Run Script File…</code> → <code>import_to_ae.jsx</code> seç. Toplu export'ta <code>batch_import.jsx</code> tüm animasyonları bir kerede ekler.</p>
-        </div>
-      </div>
-
-      <div class="gc" style="--c: #60a5fa">
-        <div class="gc-badge">MP4 / APNG</div>
-        <div class="gc-title">Video &amp; sosyal medya</div>
-        <ul class="gc-list">
-          <li>Yüksek kalite MP4 (20 Mbps)</li>
-          <li>Premiere, DaVinci, Final Cut</li>
-          <li>"None" seçince → şeffaf APNG</li>
-          <li>Tüm tarayıcılarda çalışır</li>
-        </ul>
-        <div class="gc-how">
-          <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">İndir → video editörüne sürükle. Şeffaf arka plan için arka plan rengini "None" seç → APNG çıkar.</p>
-        </div>
-      </div>
-
-      <div class="gc" style="--c: #fbbf24">
-        <div class="gc-badge">Animated GIF</div>
-        <div class="gc-title">Web, e-posta &amp; her yer</div>
-        <ul class="gc-list">
-          <li>Plugin gerektirmez</li>
-          <li>Figma, Slack, sunum, e-posta</li>
-          <li>Özel arka plan rengi</li>
-          <li>Şeffaf mod desteklenir</li>
-        </ul>
-        <div class="gc-how">
-          <span class="gc-how-label">Nasıl kullanılır</span>
-          <p class="gc-how-text">İndir → görsel koyabileceğin her yere ekle. Şeffaflık için "None" seç.</p>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- PNG → SVG Tool -->
-  <section class="img2svg-section" id="img2svg-section">
-    <div class="guide-eyebrow">Görsel → SVG</div>
-    <div class="img2svg-card">
-      <!-- Drop zone -->
-      <div class="img2svg-dz" id="img2svg-dz">
-        <div class="img2svg-dz-icon">
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        </div>
-        <p class="img2svg-dz-title">PNG, JPG veya WebP görsel bırak</p>
-        <p class="img2svg-dz-sub">Ctrl+V ile yapıştır · sürükle bırak · veya tıkla</p>
-        <input type="file" id="img2svg-input" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp">
-      </div>
-      <!-- Workspace (shown after image loaded) -->
-      <div class="img2svg-workspace" id="img2svg-workspace" style="display:none">
-        <div class="img2svg-previews">
-          <div class="img2svg-preview-col">
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <span class="img2svg-preview-label">Orijinal</span>
-              <button class="img2svg-new-btn" id="img2svg-new-btn">Yeni görsel</button>
-            </div>
-            <div class="img2svg-preview-box"><img id="img2svg-orig-img" alt=""></div>
-          </div>
-          <div class="img2svg-arrow">→</div>
-          <div class="img2svg-preview-col">
-            <span class="img2svg-preview-label">SVG Çıktı</span>
-            <div class="img2svg-preview-box" id="img2svg-svg-box"><div id="img2svg-svg-preview"></div></div>
-          </div>
-        </div>
-        <div class="img2svg-controls">
-          <span class="img2svg-q-label">Kalite</span>
-          <div class="img2svg-q-btns" id="img2svg-q-btns">
-            <button class="img2svg-q-btn" data-colors="32"  data-lt="1"   data-qt="1">Hızlı</button>
-            <button class="img2svg-q-btn" data-colors="64"  data-lt="0.5" data-qt="0.5">İyi</button>
-            <button class="img2svg-q-btn active" data-colors="128" data-lt="0.3" data-qt="0.3">Yüksek</button>
-            <button class="img2svg-q-btn" data-colors="256" data-lt="0.1" data-qt="0.1">Ultra</button>
-          </div>
-          <button class="img2svg-btn-trace" id="img2svg-trace-btn">Dönüştür</button>
-          <button class="img2svg-btn-download" id="img2svg-download-btn" style="display:none">SVG İndir</button>
-          <span class="img2svg-status" id="img2svg-status"></span>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Main Card -->
   <div class="main-card" id="main-card">
@@ -2099,7 +1778,7 @@
         </label>
         <label class="fmt-card" id="opt-mp4">
           <input type="radio" name="format" value="mp4" />
-          <div class="fmt-name">MP4 Video</div>
+          <div class="fmt-name">MOV Video</div>
           <div class="fmt-desc">High quality · Any editor</div>
           <span class="fmt-tag t-quality">Universal</span>
         </label>
@@ -2414,7 +2093,6 @@
   const progTot      = document.getElementById('prog-tot');
   const progStatus   = document.getElementById('prog-status');
   const progEyebrow  = document.getElementById('prog-eyebrow');
-  const guideEl      = document.getElementById('guide');
   const toastEl      = document.getElementById('toast');
 
   // ─────────────────────────────────────────
@@ -2534,7 +2212,6 @@
     btnExportLbl.textContent = 'Export for After Effects';
     fileInput.value = '';
     dropZone.style.display = '';
-    guideEl.classList.remove('hidden');
     mainCard.style.display  = 'none';
     doneCard.style.display  = 'none';
     document.getElementById('btn-export-json').classList.remove('visible');
@@ -3140,7 +2817,6 @@
     document.getElementById('file-name-text').textContent = `${fileQueue.length} files ready`;
     btnExportLbl.textContent = `Export All (${fileQueue.length} files)`;
     dropZone.style.display = 'none';
-    guideEl.classList.add('hidden');
     mainCard.style.display = 'block';
     doneCard.style.display = 'none';
   }
@@ -3310,7 +2986,7 @@
       await setProgress(99, fileQueue.length, 'Creating ZIP…');
       const zipBlob = await batchZip.generateAsync({ type: 'blob' });
       const isTransparent = videoBgColor === 'transparent';
-      const fmtLabel = fmt === 'mp4' ? (isTransparent ? 'APNG' : 'MP4')
+      const fmtLabel = fmt === 'mp4' ? (isTransparent ? 'APNG' : 'MOV')
                      : fmt === 'gif' ? 'GIF'
                      : 'PNG';
       const zipName = `${fileQueue.length} icons · ${fmtLabel}.zip`;
@@ -3361,7 +3037,6 @@
     iconPlay.style.display  = 'none';
 
     dropZone.style.display = 'none';
-    guideEl.classList.add('hidden');
     mainCard.style.display = 'block';
     doneCard.style.display = 'none';
     downloadBlob = null;
@@ -4080,7 +3755,7 @@
       return;
     }
 
-    // ── Branch B: Opaque → H.264 MP4 (WebCodecs) ──────────────
+    // ── Branch B: VP9 near-lossless → H.264 fallback (WebCodecs) ──
     const LOOPS       = 3;
     const totalFrames = frames * LOOPS;
     progTot.textContent = totalFrames;
@@ -4107,31 +3782,56 @@
     flat.width    = w; flat.height = h;
     const flatCtx = flat.getContext('2d');
 
+    // Try VP9 near-lossless first (bitrateMode: quantizer), fall back to H.264
     let chosenCodec = null;
-    for (const codec of ['avc1.640033', 'avc1.4d0033', 'avc1.42001f']) {
+    let useVP9 = false;
+
+    for (const codec of ['vp09.00.41.08', 'vp09.00.31.08', 'vp09.00.20.08', 'vp09.00.10.08']) {
       try {
-        const s = await VideoEncoder.isConfigSupported({ codec, width: w, height: h, bitrate: 20_000_000, framerate: fps });
-        if (s.supported) { chosenCodec = codec; break; }
+        const s = await VideoEncoder.isConfigSupported({
+          codec, width: w, height: h, bitrateMode: 'quantizer', framerate: fps
+        });
+        if (s.supported) { chosenCodec = codec; useVP9 = true; break; }
       } catch(e) {}
     }
+
+    if (!useVP9) {
+      for (const codec of ['avc1.640033', 'avc1.4d0033', 'avc1.42001f']) {
+        try {
+          const s = await VideoEncoder.isConfigSupported({ codec, width: w, height: h, bitrate: 20_000_000, framerate: fps });
+          if (s.supported) { chosenCodec = codec; break; }
+        } catch(e) {}
+      }
+    }
+
     if (!chosenCodec) {
-      showToast('H.264 not supported in this browser.');
+      showToast('No supported video codec found in this browser.');
       anim.destroy(); document.body.removeChild(div);
       releaseOverlay(); if (!batchMode) progEyebrow.textContent = 'Rendering frames';
       return;
     }
 
-    await setProgress(3, 0, `Encoding ${totalFrames} frames (${LOOPS}× loops)…`);
+    const codecLabel = useVP9 ? 'VP9 near-lossless' : 'H.264';
+    await setProgress(3, 0, `Encoding ${totalFrames} frames — ${codecLabel}…`);
 
-    const target = new ArrayBufferTarget();
-    const muxer  = new Muxer({ target, video: { codec: 'avc', width: w, height: h }, fastStart: 'in-memory' });
+    const target  = new ArrayBufferTarget();
+    const muxer   = new Muxer({
+      target,
+      video: { codec: useVP9 ? 'vp9' : 'avc', width: w, height: h },
+      fastStart: 'in-memory'
+    });
 
     let encError = null;
     const encoder = new VideoEncoder({
       output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
       error: e => { encError = e; },
     });
-    encoder.configure({ codec: chosenCodec, width: w, height: h, bitrate: 20_000_000, framerate: fps });
+
+    if (useVP9) {
+      encoder.configure({ codec: chosenCodec, width: w, height: h, bitrateMode: 'quantizer', framerate: fps });
+    } else {
+      encoder.configure({ codec: chosenCodec, width: w, height: h, bitrate: 20_000_000, framerate: fps });
+    }
 
     for (let i = 0; i < totalFrames && !encError; i++) {
       const frameIdx = i % frames;
@@ -4142,7 +3842,13 @@
       flatCtx.drawImage(lottieCanvas, 0, 0, w, h);
       const timestamp = Math.round(i * 1_000_000 / fps);
       const vf = new VideoFrame(flat, { timestamp });
-      try { encoder.encode(vf, { keyFrame: frameIdx === 0 }); } finally { vf.close(); }
+      try {
+        if (useVP9) {
+          encoder.encode(vf, { keyFrame: frameIdx === 0, vp9: { quantizer: 0 } });
+        } else {
+          encoder.encode(vf, { keyFrame: frameIdx === 0 });
+        }
+      } finally { vf.close(); }
       const pct = 3 + ((i + 1) / totalFrames) * 90;
       progCur.textContent = i + 1;
       progressBar.style.width = pct + '%';
@@ -4162,11 +3868,12 @@
       return;
     }
 
-    const blob = new Blob([target.buffer], { type: 'video/mp4' });
+    const movLabel = useVP9 ? 'MOV (Lossless)' : 'MOV';
+    const blob = new Blob([target.buffer], { type: 'video/quicktime' });
     await setProgress(100, totalFrames, 'Done!');
     if (!batchMode) progEyebrow.textContent = 'Rendering frames';
     isExporting = false;
-    onExportSuccess(blob, `${animInfo.baseName}.mp4`, 'video', 'MP4');
+    onExportSuccess(blob, `${animInfo.baseName}.mov`, 'video', movLabel);
   }
 
   // ─────────────────────────────────────────
@@ -4304,10 +4011,13 @@
       steps.style.display = 'none';
       dlLbl.textContent = 'Download APNG';
     } else if (format === 'video') {
-      title.textContent = 'Video file ready';
-      sub.textContent   = `High quality ${ext || 'MP4'} — drag it directly into After Effects, Premiere Pro, DaVinci Resolve, or any video editor.`;
+      const isLossless = ext && ext.includes('Lossless');
+      title.textContent = isLossless ? 'Near-lossless MOV ready' : 'MOV ready';
+      sub.textContent   = isLossless
+        ? 'VP9 near-lossless · Renk kaybı yok · After Effects, Premiere Pro, DaVinci Resolve\'a doğrudan sürükle.'
+        : `High quality MOV — drag it directly into After Effects, Premiere Pro, DaVinci Resolve, or any video editor.`;
       steps.style.display = 'none';
-      dlLbl.textContent = `Download ${ext || 'MP4'}`;
+      dlLbl.textContent = isLossless ? 'Download MOV (Near-lossless)' : 'Download MOV';
     } else if (format === 'gif') {
       title.textContent = 'GIF is ready';
       sub.textContent   = 'Drop it into emails, docs, Figma, presentations — works everywhere.';
@@ -4324,6 +4034,29 @@
     const ipNum = ip || 0;
     const assets = data.assets || [];
     const rootLayers = data.layers || [];
+
+    // ── Build global effect map for expression resolution ──
+    // Maps layerName → { effectGroupName → { paramIndex → paramName } }
+    const globalEffectMap = {};
+    function scanLayerEffects(layers) {
+      for (const layer of layers) {
+        if (layer.ef && layer.ef.length && layer.nm) {
+          globalEffectMap[layer.nm] = {};
+          for (const eff of layer.ef) {
+            if (eff.ty === 5 && eff.nm && eff.ef) {
+              globalEffectMap[layer.nm][eff.nm] = {};
+              for (let i = 0; i < eff.ef.length; i++) {
+                globalEffectMap[layer.nm][eff.nm][i + 1] = eff.ef[i].nm || ('Param ' + (i + 1));
+              }
+            }
+          }
+        }
+      }
+    }
+    scanLayerEffects(rootLayers);
+    for (const asset of assets) {
+      if (asset.layers) scanLayerEffects(asset.layers);
+    }
 
     // ── Helpers to serialise JS values for the JSX output ──
     function jsArr(arr) {
@@ -4347,6 +4080,100 @@
         });
       }
       return '{v:' + jsArr(strip2D(p.v)) + ',i:' + jsArr(strip2D(p.i)) + ',o:' + jsArr(strip2D(p.o)) + ',c:' + (p.c ? 'true' : 'false') + '}';
+    }
+
+    // ── Bodymovin expression sanitizer (build-time) ──
+    function cleanBmExpression(expr) {
+      if (!expr || typeof expr !== 'string') return expr;
+      var s = expr;
+      // Strip $bm_rt declaration and try/catch wrapper
+      s = s.replace(/var\s+\$bm_rt;\s*/g, '');
+      s = s.replace(/try\s*\{\s*\n?/g, '');
+      s = s.replace(/\}\s*catch\s*\(\s*\w+\s*\)\s*\{[^}]*\}/g, '');
+      s = s.replace(/\$bm_rt\s*=\s*/g, '');
+
+      // Replace $bm_ helper calls using balanced-paren string scanning
+      var bmOps = {'$bm_div':' / ','$bm_mul':' * ','$bm_sum':' + ','$bm_sub':' - '};
+      var bmChanged = true;
+      for (var bmPass = 0; bmPass < 30 && bmChanged; bmPass++) {
+        bmChanged = false;
+        for (var bmName in bmOps) {
+          var bmIdx;
+          while ((bmIdx = s.indexOf(bmName + '(')) >= 0) {
+            var bmOpen = bmIdx + bmName.length;
+            var bmDepth = 0, bmComma = -1, bmJ;
+            for (bmJ = bmOpen; bmJ < s.length; bmJ++) {
+              if (s[bmJ] === '(') bmDepth++;
+              else if (s[bmJ] === ')') { bmDepth--; if (bmDepth === 0) break; }
+              else if (s[bmJ] === ',' && bmDepth === 1 && bmComma === -1) bmComma = bmJ;
+            }
+            if (bmDepth !== 0 || bmComma === -1) break;
+            var bmA1 = s.substring(bmOpen + 1, bmComma).trim();
+            var bmA2 = s.substring(bmComma + 1, bmJ).trim();
+            s = s.substring(0, bmIdx) + '(' + bmA1 + bmOps[bmName] + bmA2 + ')' + s.substring(bmJ + 1);
+            bmChanged = true;
+          }
+        }
+        // $bm_neg (single argument)
+        var negI;
+        while ((negI = s.indexOf('$bm_neg(')) >= 0) {
+          var negOpen = negI + 8, negD = 0, negJ;
+          for (negJ = negOpen; negJ < s.length; negJ++) {
+            if (s[negJ] === '(') negD++;
+            else if (s[negJ] === ')') { negD--; if (negD === 0) break; }
+          }
+          if (negD !== 0) break;
+          s = s.substring(0, negI) + '(-' + s.substring(negOpen + 1, negJ).trim() + ')' + s.substring(negJ + 1);
+          bmChanged = true;
+        }
+      }
+
+      // Resolve pseudo-effect references to individual slider names
+      if (globalEffectMap && Object.keys(globalEffectMap).length) {
+        // Step 1: Find layer variable assignments: var = thisComp.layer('Name')
+        var layerVars = {};
+        s = s.replace(/(\w+)\s*=\s*thisComp\.layer\(['"](.*?)['"]\)\s*;?[ \t]*\n?/g, function(m, vn, ln) {
+          layerVars[vn] = ln; return '';
+        });
+        // Step 2: Find effect assignments: var = prefix.effect('Name') or var = effect('Name')
+        var effectVars = {};
+        s = s.replace(/(\w+)\s*=\s*(\w+)\.effect\(['"](.*?)['"]\)\s*;?[ \t]*\n?/g, function(m, vn, pv, en) {
+          effectVars[vn] = { layerName: layerVars[pv] || null, effectName: en }; return '';
+        });
+        s = s.replace(/(\w+)\s*=\s*effect\(['"](.*?)['"]\)\s*;?[ \t]*\n?/g, function(m, vn, en) {
+          effectVars[vn] = { layerName: null, effectName: en }; return '';
+        });
+        // Step 3: Replace effVar(N) with resolved effect('ParamName')(1)
+        for (var evn in effectVars) {
+          var evInfo = effectVars[evn];
+          var evData = null, evLayerName = evInfo.layerName;
+          // Look up in globalEffectMap
+          for (var eln in globalEffectMap) {
+            if (globalEffectMap[eln][evInfo.effectName]) {
+              evData = globalEffectMap[eln][evInfo.effectName];
+              if (!evLayerName) evLayerName = eln;
+              break;
+            }
+          }
+          if (evData) {
+            var evPfx = evLayerName ? "thisComp.layer('" + evLayerName + "')." : '';
+            var evRe = new RegExp('\\b' + evn + '\\((\\d+)\\)', 'g');
+            s = s.replace(evRe, function(m2, idx) {
+              var pn = evData[parseInt(idx)];
+              return pn ? evPfx + "effect('" + pn + "')(1)" : m2;
+            });
+          }
+        }
+      }
+
+      // Reduce excessive parens: ((x)) → (x)
+      for (var pp = 0; pp < 5; pp++) {
+        var prev2 = s;
+        s = s.replace(/\(\(([^()]+)\)\)/g, '($1)');
+        if (s === prev2) break;
+      }
+      // Clean up empty lines and trailing whitespace
+      return s.replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
     }
 
     // ── Main JSX code accumulator ──
@@ -4397,19 +4224,32 @@
           const kf = valid[ki];
           emit('  ' + propExpr + '.setValueAtTime(' + (kf.t / fps).toFixed(6) + ', ' + JSON.stringify(strip(kf.s)) + ');');
         }
-        // Easing
+        // Easing — map Lottie bezier tangents to AE KeyframeEase
         for (let ki = 0; ki < valid.length; ki++) {
           const kf = valid[ki];
-          const [eo, ei] = getEaseXY(kf);
           const idx = ki + (firstT > 0 ? 2 : 1);
+          // Hold keyframe: set HOLD interpolation, skip ease
+          if (kf.h === 1) {
+            emit('  try{' + propExpr + '.setInterpolationTypeAtKey(' + idx + ',KeyframeInterpolationType.HOLD);}catch(e){}');
+            continue;
+          }
+          const prevKf = ki > 0 ? valid[ki - 1] : null;
+          // Out-ease: this keyframe's out tangent (how value leaves)
+          const eo = getEaseXY(kf)[0];
+          // In-ease: previous keyframe's in tangent (describes arrival at this key)
+          const ei = prevKf ? getEaseXY(prevKf)[1] : getEaseXY(kf)[1];
           emit('  try{setEase(' + propExpr + ',' + idx + ',' + eo + ',' + ei + ');}catch(e){}');
         }
-        // Expression (e.g. elastic controller)
+        // Expression (e.g. elastic controller) — sanitize Bodymovin wrappers
         if (lottieVal.x && typeof lottieVal.x === 'string') {
-          emit('  ' + propExpr + '.expression = ' + JSON.stringify(lottieVal.x) + ';');
+          emit('  ' + propExpr + '.expression = ' + JSON.stringify(cleanBmExpression(lottieVal.x)) + ';');
         }
       } else {
         emit('  ' + propExpr + '.setValue(' + JSON.stringify(strip(k)) + ');');
+        // Expression on static (non-animated) property — e.g. scale-linking expressions
+        if (lottieVal.x && typeof lottieVal.x === 'string') {
+          emit('  ' + propExpr + '.expression = ' + JSON.stringify(cleanBmExpression(lottieVal.x)) + ';');
+        }
       }
     }
 
@@ -4433,10 +4273,12 @@
     emit('    Array.isArray = function(a) { return Object.prototype.toString.call(a) === "[object Array]"; };');
     emit('  }');
     emit('');
-    emit('  // Easing helper');
+    emit('  // Easing helper — KeyframeEase(speed, influence)');
     emit('  function setEase(prop, keyIdx, outInfl, inInfl) {');
-    emit('    var eOut = new KeyframeEase(outInfl, 0);');
-    emit('    var eIn  = new KeyframeEase(inInfl,  0);');
+    emit('    outInfl = Math.max(0.1, Math.min(100, outInfl));');
+    emit('    inInfl  = Math.max(0.1, Math.min(100, inInfl));');
+    emit('    var eOut = new KeyframeEase(0, outInfl);');
+    emit('    var eIn  = new KeyframeEase(0, inInfl);');
     emit('    var n = prop.value instanceof Array ? prop.value.length : 1;');
     emit('    var a = [], b = [];');
     emit('    for (var d = 0; d < n; d++) { a.push(eOut); b.push(eIn); }');
@@ -4453,6 +4295,19 @@
     emit('    return s;');
     emit('  }');
     emit('');
+
+    // ── Track matte helper ──
+    function emitTrackMattes(layers, indexToVar) {
+      const ttMap = {1:'ALPHA', 2:'ALPHA_INVERTED', 3:'LUMA', 4:'LUMA_INVERTED'};
+      for (const layer of layers) {
+        if (!layer.tt) continue;
+        const idx = layer.ind !== undefined ? layer.ind : layers.indexOf(layer);
+        const varName = indexToVar[idx];
+        if (!varName) continue;
+        const ttType = ttMap[layer.tt] || 'ALPHA';
+        emit('  try { ' + varName + '.trackMatteType = TrackMatteType.' + ttType + '; } catch(e) {}');
+      }
+    }
 
     // ── Build precomp sub-compositions first (3-phase each) ──
     const precompAssets = assets.filter(a => a.layers && a.layers.length);
@@ -4481,6 +4336,12 @@
         const pcPrefix = 'pc' + ai + '_' + li;
         layerIndexToVar[aLayers[li].ind !== undefined ? aLayers[li].ind : li] = pcPrefix;
         emitLayerCreate(aLayers[li], varName, pcPrefix);
+      }
+      // Track mattes (precomp)
+      const pcMattes = aLayers.filter(l => l.tt);
+      if (pcMattes.length) {
+        emit('  // Track mattes (precomp)');
+        emitTrackMattes(aLayers, layerIndexToVar);
       }
       // Phase 2: parents
       const pcParents = aLayers.filter(l => l.parent !== undefined && l.parent !== null);
@@ -4524,6 +4385,14 @@
     emit('  // Phase 1: create layers');
     for (let li = rootLayers.length - 1; li >= 0; li--) {
       emitLayerCreate(rootLayers[li], 'comp', 'lyr' + li);
+    }
+
+    // Track mattes (root)
+    const rootMattes = rootLayers.filter(l => l.tt);
+    if (rootMattes.length) {
+      emit('');
+      emit('  // Track mattes');
+      emitTrackMattes(rootLayers, layerIndexToVar);
     }
 
     // Phase 2: parent relationships (BEFORE transforms — critical for correct coord space)
@@ -4797,23 +4666,19 @@
       if (!layer) return;
       const ty = layer.ty;
       const nm = (layer.nm || 'layer').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const ipSec = ((layer.ip || 0) / fps).toFixed(6);
+      const opSec = ((layer.op || 0) / fps).toFixed(6);
       if (ty === 3) {
-        const opSec = ((layer.op || 0) / fps).toFixed(6);
         emit('');
         emit('  // ── Null [' + (layer.ind || 0) + '] "' + nm + '"');
-        emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull(' + opSec + ');');
+        emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull();');
         emit('  ' + prefix + '.name = "' + nm + '";');
-        emit('  ' + prefix + '.inPoint = ' + ((layer.ip || 0) / fps).toFixed(6) + ';');
-        emit('  ' + prefix + '.outPoint = ' + opSec + ';');
       } else if (ty === 1) {
         const sc = layer.sc || '#000000';
         const rc = parseInt(sc.slice(1,3),16)/255, gc = parseInt(sc.slice(3,5),16)/255, bc = parseInt(sc.slice(5,7),16)/255;
         emit('');
         emit('  // ── Solid [' + (layer.ind || 0) + '] "' + nm + '"');
         emit('  var ' + prefix + ' = ' + compVar + '.layers.addSolid([' + rc.toFixed(4) + ',' + gc.toFixed(4) + ',' + bc.toFixed(4) + '], "' + nm + '", ' + (layer.sw || w) + ', ' + (layer.sh || h) + ', 1);');
-        emit('  ' + prefix + '.inPoint = ' + ((layer.ip || 0) / fps).toFixed(6) + ';');
-        emit('  ' + prefix + '.outPoint = ' + ((layer.op || 0) / fps).toFixed(6) + ';');
-        emit('  ' + prefix + '.startTime = ' + ((layer.st || 0) / fps).toFixed(6) + ';');
       } else if (ty === 0) {
         const pcVar = precompVarMap[layer.refId];
         emit('');
@@ -4825,79 +4690,141 @@
           emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull();');
           emit('  ' + prefix + '.name = "' + nm + ' (precomp missing)";');
         }
-        emit('  ' + prefix + '.inPoint = ' + ((layer.ip || 0) / fps).toFixed(6) + ';');
-        emit('  ' + prefix + '.outPoint = ' + ((layer.op || 0) / fps).toFixed(6) + ';');
-        emit('  ' + prefix + '.startTime = ' + ((layer.st || 0) / fps).toFixed(6) + ';');
       } else if (ty === 4) {
+        // Shape layer with no shapes + pseudo-effects → emit as Null
+        const hasShapes = (layer.shapes || []).length > 0;
+        const hasPseudoEffect = (layer.ef || []).some(e => e.ty === 5);
         emit('');
-        emit('  // ── Shape Layer [' + (layer.ind || 0) + '] "' + nm + '"');
-        emit('  var ' + prefix + ' = ' + compVar + '.layers.addShape();');
+        if (!hasShapes && hasPseudoEffect) {
+          emit('  // ── Null (effect controller) [' + (layer.ind || 0) + '] "' + nm + '"');
+          emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull();');
+        } else {
+          emit('  // ── Shape Layer [' + (layer.ind || 0) + '] "' + nm + '"');
+          emit('  var ' + prefix + ' = ' + compVar + '.layers.addShape();');
+        }
         emit('  ' + prefix + '.name = "' + nm + '";');
-        emit('  ' + prefix + '.inPoint = ' + ((layer.ip || 0) / fps).toFixed(6) + ';');
-        emit('  ' + prefix + '.outPoint = ' + ((layer.op || 0) / fps).toFixed(6) + ';');
-        emit('  ' + prefix + '.startTime = ' + ((layer.st || 0) / fps).toFixed(6) + ';');
       } else {
         emit('');
         emit('  var ' + prefix + ' = ' + compVar + '.layers.addNull();');
         emit('  ' + prefix + '.name = "' + nm + ' (ty=' + ty + ')";');
       }
+      // All layers: startTime = 0, timing via inPoint/outPoint only
+      emit('  ' + prefix + '.startTime = 0;');
+      emit('  ' + prefix + '.inPoint = ' + ipSec + ';');
+      emit('  ' + prefix + '.outPoint = ' + opSec + ';');
     }
 
     // ═══════════════════════════════════════════
     // emitLayerFill — Phase 3: transforms + contents
     // ═══════════════════════════════════════════
+    // ── Emit layer effects (ef array → ADBE Slider Controls etc.) ──
+    function emitLayerEffects(layer, prefix) {
+      if (!layer.ef || !layer.ef.length) return;
+      for (let ei = 0; ei < layer.ef.length; ei++) {
+        const eff = layer.ef[ei];
+        if (eff.ty === 5 && eff.ef) {
+          // Pseudo-effect: emit each sub-effect as individual control
+          for (let si = 0; si < eff.ef.length; si++) {
+            const sub = eff.ef[si];
+            const subNm = (sub.nm || 'Slider ' + (si + 1)).replace(/"/g, '\\"');
+            if (sub.ty === 0) {
+              // Slider control
+              const effVar = prefix + '_ef' + ei + '_' + si;
+              emit('  var ' + effVar + ' = ' + prefix + '.property("Effects").addProperty("ADBE Slider Control");');
+              emit('  ' + effVar + '.name = "' + subNm + '";');
+              if (sub.v && sub.v.k !== undefined && sub.v.a !== 1) {
+                emit('  ' + effVar + '.property(1).setValue(' + sub.v.k + ');');
+              }
+            } else if (sub.ty === 2) {
+              // Checkbox control
+              const effVar = prefix + '_ef' + ei + '_' + si;
+              emit('  var ' + effVar + ' = ' + prefix + '.property("Effects").addProperty("ADBE Checkbox Control");');
+              emit('  ' + effVar + '.name = "' + subNm + '";');
+              if (sub.v && sub.v.k !== undefined) {
+                emit('  ' + effVar + '.property(1).setValue(' + (sub.v.k ? 1 : 0) + ');');
+              }
+            } else if (sub.ty === 6) {
+              // Color control
+              const effVar = prefix + '_ef' + ei + '_' + si;
+              emit('  var ' + effVar + ' = ' + prefix + '.property("Effects").addProperty("ADBE Color Control");');
+              emit('  ' + effVar + '.name = "' + subNm + '";');
+              if (sub.v && sub.v.k !== undefined) {
+                emit('  ' + effVar + '.property(1).setValue(' + JSON.stringify(sub.v.k) + ');');
+              }
+            } else if (sub.ty === 7) {
+              // Point control
+              const effVar = prefix + '_ef' + ei + '_' + si;
+              emit('  var ' + effVar + ' = ' + prefix + '.property("Effects").addProperty("ADBE Point Control");');
+              emit('  ' + effVar + '.name = "' + subNm + '";');
+              if (sub.v && sub.v.k !== undefined) {
+                emit('  ' + effVar + '.property(1).setValue(' + JSON.stringify(sub.v.k) + ');');
+              }
+            }
+          }
+        }
+      }
+    }
+
     function emitLayerFill(layer, prefix) {
       if (!layer) return;
       const ty = layer.ty;
+      const isEffectNull = ty === 4 && (layer.shapes || []).length === 0 && (layer.ef || []).some(e => e.ty === 5);
 
-      if (ty === 3) {
-        // ── Null layer: zero anchor, offset position to compensate, then hide ──
+      if (ty === 3 || isEffectNull) {
+        // ── Null layer (or shape-as-null effect controller) ──
         const ks = layer.ks || {};
-        // Read original anchor value so we can subtract it from position
-        const aProp = ks.a || {};
-        const ak = (typeof aProp === 'object' && Array.isArray(aProp.k)) ? aProp.k
-                 : (Array.isArray(aProp) ? aProp : [0, 0]);
-        const ax = Array.isArray(ak) && ak.length >= 1 ? (ak[0] || 0) : 0;
-        const ay = Array.isArray(ak) && ak.length >= 2 ? (ak[1] || 0) : 0;
+        if (ty === 3) {
+          // Original null: zero anchor, offset position to compensate
+          const aProp = ks.a || {};
+          const ak = (typeof aProp === 'object' && Array.isArray(aProp.k)) ? aProp.k
+                   : (Array.isArray(aProp) ? aProp : [0, 0]);
+          const ax = Array.isArray(ak) && ak.length >= 1 ? (ak[0] || 0) : 0;
+          const ay = Array.isArray(ak) && ak.length >= 2 ? (ak[1] || 0) : 0;
 
-        emit('  ' + prefix + '.transform.anchorPoint.setValue([0, 0]);');
+          emit('  ' + prefix + '.transform.anchorPoint.setValue([0, 0]);');
 
-        if (ks.p) {
-          const pp = ks.p;
-          if (pp.a === 1 && Array.isArray(pp.k)) {
-            // Animated position — adjust each keyframe by -anchor
-            const valid = pp.k.filter(kf => kf.t !== undefined && kf.s !== undefined);
-            if (valid.length) {
-              const firstT = valid[0].t;
-              if (firstT > 0) {
-                const s0 = valid[0].s;
-                emit('  ' + prefix + '.transform.position.setValueAtTime(0, [' +
-                  (s0[0] - ax).toFixed(4) + ', ' + ((s0[1] || 0) - ay).toFixed(4) + ']);');
+          if (ks.p) {
+            const pp = ks.p;
+            if (pp.a === 1 && Array.isArray(pp.k)) {
+              const valid = pp.k.filter(kf => kf.t !== undefined && kf.s !== undefined);
+              if (valid.length) {
+                const firstT = valid[0].t;
+                if (firstT > 0) {
+                  const s0 = valid[0].s;
+                  emit('  ' + prefix + '.transform.position.setValueAtTime(0, [' +
+                    (s0[0] - ax).toFixed(4) + ', ' + ((s0[1] || 0) - ay).toFixed(4) + ']);');
+                }
+                for (const kf of valid) {
+                  const t = (kf.t / fps).toFixed(6);
+                  const s = kf.s;
+                  emit('  ' + prefix + '.transform.position.setValueAtTime(' + t + ', [' +
+                    (s[0] - ax).toFixed(4) + ', ' + ((s[1] || 0) - ay).toFixed(4) + ']);');
+                }
               }
-              for (const kf of valid) {
-                const t = (kf.t / fps).toFixed(6);
-                const s = kf.s;
-                emit('  ' + prefix + '.transform.position.setValueAtTime(' + t + ', [' +
-                  (s[0] - ax).toFixed(4) + ', ' + ((s[1] || 0) - ay).toFixed(4) + ']);');
-              }
+            } else {
+              const pk = Array.isArray(pp.k) ? pp.k : [pp.k || 0, 0];
+              emit('  ' + prefix + '.transform.position.setValue([' +
+                ((pk[0] || 0) - ax).toFixed(4) + ', ' + ((pk[1] || 0) - ay).toFixed(4) + ']);');
             }
-          } else {
-            // Static position — adjust by -anchor
-            const pk = Array.isArray(pp.k) ? pp.k : [pp.k || 0, 0];
-            emit('  ' + prefix + '.transform.position.setValue([' +
-              ((pk[0] || 0) - ax).toFixed(4) + ', ' + ((pk[1] || 0) - ay).toFixed(4) + ']);');
           }
+
+          if (ks.o) emitProp(prefix + '.transform.opacity', ks.o, 1, false);
+          if (ks.r) emitProp(prefix + '.transform.rotation', ks.r, 1, false);
+          if (ks.s) emitProp(prefix + '.transform.scale', ks.s, 2, false);
+
+          emit('  try { ' + prefix + '.guideLayer = true; } catch(e) {}');
+          emit('  ' + prefix + '.shy = true;');
+        } else {
+          // Effect controller (was shape, now null): emit basic transforms
+          emitLayerTransform(prefix, layer);
         }
-
-        if (ks.o) emitProp(prefix + '.transform.opacity', ks.o, 1, false);
-        if (ks.r) emitProp(prefix + '.transform.rotation', ks.r, 1, false);
-        if (ks.s) emitProp(prefix + '.transform.scale', ks.s, 2, false);
-
-        emit('  try { ' + prefix + '.guideLayer = true; } catch(e) {}');
-        emit('  ' + prefix + '.shy = true;');
+        // Emit effects
+        emitLayerEffects(layer, prefix);
 
       } else {
         emitLayerTransform(prefix, layer);
+        // Emit effects for any layer type
+        emitLayerEffects(layer, prefix);
         if (ty === 4) {
           const shapes = restructureShapes(layer.shapes || []);
           const cv = prefix + '_ct';
@@ -6548,170 +6475,7 @@ Generated by Lottie → After Effects Converter
     });
   })();
 
-  // ══════════════════════════════════════════════════════
-  // PNG → SVG Tool
-  // ══════════════════════════════════════════════════════
-  (function() {
-    var currentSvg = null;
-    var currentFilename = 'image';
-    var currentImageData = null;
-    var activeColors = 128;
-    var activeLt = 0.3;
-    var activeQt = 0.3;
 
-    var dz = document.getElementById('img2svg-dz');
-    var workspace = document.getElementById('img2svg-workspace');
-    var origImg = document.getElementById('img2svg-orig-img');
-    var svgPreview = document.getElementById('img2svg-svg-preview');
-    var traceBtn = document.getElementById('img2svg-trace-btn');
-    var downloadBtn = document.getElementById('img2svg-download-btn');
-    var statusEl = document.getElementById('img2svg-status');
-    var newBtn = document.getElementById('img2svg-new-btn');
-    var fileInput = document.getElementById('img2svg-input');
-
-    // Quality button selection
-    document.getElementById('img2svg-q-btns').addEventListener('click', function(e) {
-      var btn = e.target.closest('.img2svg-q-btn');
-      if (!btn) return;
-      document.querySelectorAll('.img2svg-q-btn').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      activeColors = parseInt(btn.dataset.colors);
-      activeLt = parseFloat(btn.dataset.lt);
-      activeQt = parseFloat(btn.dataset.qt);
-    });
-
-    function getTraceOptions() {
-      return {
-        numberofcolors:   activeColors,
-        colorsampling:    2,
-        colorquantcycles: 5,
-        mincolorratio:    0,
-        ltres:            activeLt,
-        qtres:            activeQt,
-        pathomit:         activeColors >= 128 ? 2 : activeColors >= 64 ? 4 : 8,
-        strokewidth:      0,
-        scale:            1,
-        roundcoords:      2,
-        blurradius:       0,
-        blurdelta:        20,
-        desc:             false,
-        viewbox:          true,
-      };
-    }
-
-    function prepareImage(file, callback) {
-      currentFilename = file.name.replace(/\.[^.]+$/, '') || 'image';
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var img = new Image();
-        img.onload = function() {
-          // Resize to max 2000px to keep tracing fast while preserving quality
-          var MAX = 2000;
-          var w = img.width, h = img.height;
-          if (w > MAX || h > MAX) {
-            var ratio = Math.min(MAX / w, MAX / h);
-            w = Math.round(w * ratio);
-            h = Math.round(h * ratio);
-          }
-          var c = document.createElement('canvas');
-          c.width = w; c.height = h;
-          var ctx = c.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          callback(e.target.result, ctx.getImageData(0, 0, w, h));
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function loadImage(file) {
-      prepareImage(file, function(dataUrl, imgData) {
-        origImg.src = dataUrl;
-        currentImageData = imgData;
-        currentSvg = null;
-        downloadBtn.style.display = 'none';
-        statusEl.textContent = '';
-        svgPreview.innerHTML = '';
-        dz.style.display = 'none';
-        workspace.style.display = '';
-        runTrace();
-      });
-    }
-
-    function runTrace() {
-      if (!currentImageData) return;
-      traceBtn.disabled = true;
-      downloadBtn.style.display = 'none';
-      statusEl.textContent = '';
-      svgPreview.innerHTML = '<div class="img2svg-loading">Dönüştürülüyor\u2026</div>';
-      setTimeout(function() {
-        try {
-          var opts = getTraceOptions();
-          var svgStr = ImageTracer.imagedataToSVG(currentImageData, opts);
-          currentSvg = svgStr;
-          svgPreview.innerHTML = svgStr;
-          var svgEl = svgPreview.querySelector('svg');
-          if (svgEl) { svgEl.style.cssText = 'max-width:100%;max-height:100%;display:block;'; }
-          var kb = (svgStr.length / 1024).toFixed(1);
-          statusEl.textContent = '\u2713 ' + kb + ' KB';
-          downloadBtn.style.display = '';
-        } catch(err) {
-          statusEl.textContent = 'Hata: ' + (err.message || err);
-          svgPreview.innerHTML = '';
-        }
-        traceBtn.disabled = false;
-      }, 40);
-    }
-
-    traceBtn.addEventListener('click', runTrace);
-
-    downloadBtn.addEventListener('click', function() {
-      if (!currentSvg) return;
-      var blob = new Blob([currentSvg], { type: 'image/svg+xml' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url; a.download = currentFilename + '.svg'; a.click();
-      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
-    });
-
-    newBtn.addEventListener('click', function() {
-      currentSvg = null; currentImageData = null;
-      origImg.src = ''; svgPreview.innerHTML = '';
-      statusEl.textContent = ''; downloadBtn.style.display = 'none';
-      workspace.style.display = 'none';
-      dz.style.display = '';
-      fileInput.value = '';
-    });
-
-    // File input
-    fileInput.addEventListener('change', function() {
-      if (fileInput.files[0]) loadImage(fileInput.files[0]);
-    });
-
-    // Drag & drop on the drop zone
-    dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('drag-over'); });
-    dz.addEventListener('dragleave', function() { dz.classList.remove('drag-over'); });
-    dz.addEventListener('drop', function(e) {
-      e.preventDefault(); dz.classList.remove('drag-over');
-      var file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) loadImage(file);
-    });
-
-    // Global paste (Ctrl+V)
-    document.addEventListener('paste', function(e) {
-      // Only if not typing in an input/textarea
-      var tag = document.activeElement && document.activeElement.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-      var items = e.clipboardData && e.clipboardData.items;
-      if (!items) return;
-      for (var i = 0; i < items.length; i++) {
-        if (items[i].type.startsWith('image/')) {
-          var file = items[i].getAsFile();
-          if (file) { loadImage(file); break; }
-        }
-      }
-    });
-  })();
 </script>
 </body>
 </html>
